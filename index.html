@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soraya's Kitchen</title>
+<style>
+:root{--accent:#B0562A;--accent-soft:#F3E7DF;--ink:#3B2F2A;--muted:#8A7A70;--paper:#FBF6F2;--card:#fff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;padding:24px 16px 64px;background:var(--paper);color:var(--ink);font-family:Georgia,"Times New Roman",serif;line-height:1.55}
+.wrap{max-width:720px;margin:0 auto}
+header{text-align:center;margin-bottom:24px}
+h1{font-size:2rem;color:var(--accent);margin:0 0 6px}
+.sub{color:var(--muted);font-style:italic;margin:0;font-size:.95rem}
+.search{width:100%;margin:20px 0 18px;padding:12px 14px;font:inherit;font-size:1rem;color:var(--ink);background:var(--card);border:1px solid #E5D5CA;border-radius:12px}
+.search::placeholder{color:#B7A79C}
+.search:focus{outline:2px solid var(--accent);outline-offset:1px}
+.recipe{background:var(--card);border:1px solid #EADDD4;border-radius:14px;margin-bottom:10px;overflow:hidden}
+.recipe[open]{border-color:var(--accent)}
+summary{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;list-style:none;user-select:none}
+summary::-webkit-details-marker{display:none}
+.num{flex:0 0 auto;width:30px;height:30px;display:grid;place-items:center;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:bold;font-size:.9rem}
+.titlewrap{flex:1 1 auto;min-width:0}
+.title{display:block;font-weight:bold;font-size:1.05rem}
+.meta{display:block;font-size:.78rem;color:var(--muted);margin-top:2px}
+.tag{flex:0 0 auto;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);background:var(--accent-soft);padding:3px 8px;border-radius:999px;font-family:system-ui,-apple-system,sans-serif}
+.chev{flex:0 0 auto;color:var(--muted);font-size:1.4rem;transition:transform .15s}
+.recipe[open] .chev{transform:rotate(90deg)}
+.body{padding:0 16px 18px;border-top:1px solid #F0E5DD}
+.blurb{font-style:italic;margin:14px 0 4px}
+h3{font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin:20px 0 8px}
+ul,ol{margin:0 0 4px;padding-left:22px}
+li{margin-bottom:6px}
+p{margin:0 0 10px}
+h2.section{font-size:.8rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:26px 0 12px;padding-bottom:6px;border-bottom:1px solid #E5D5CA;font-family:system-ui,-apple-system,sans-serif}
+.share{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid #F0E5DD}
+.sh{font-family:system-ui,-apple-system,sans-serif;font-size:.82rem;padding:9px 14px;border-radius:999px;cursor:pointer;background:var(--card);color:var(--accent);border:1px solid var(--accent)}
+.sh:active{transform:scale(.97)}
+.sh-wa{background:#25D366;border-color:#25D366;color:#fff;font-weight:600}
+.sh[hidden]{display:none}
+#toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(12px);background:var(--ink);color:var(--paper);padding:10px 18px;border-radius:999px;font-family:system-ui,sans-serif;font-size:.85rem;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:99}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.empty{text-align:center;color:var(--muted);font-style:italic;padding:24px 0;display:none}
+footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:28px;font-style:italic}
+@media print{
+ body{background:#fff;padding:0}
+ header,.search,.empty,footer,h2.section,.share,#toast{display:none!important}
+ .recipe{display:none!important}
+ .recipe.print-me{display:block!important;border:none}
+ .recipe.print-me .body{display:block!important;padding:0;border-top:none}
+ .recipe.print-me summary{padding:0 0 8px;display:block}
+ .recipe.print-me .titlewrap,.recipe.print-me .title{display:inline}
+ .recipe.print-me .title{font-size:1.25rem}
+ .recipe.print-me .meta{display:block;margin-top:4px}
+ .recipe.print-me .chev,.recipe.print-me .tag{display:none}
+ .recipe.print-me .num{background:none;color:var(--accent);width:auto;height:auto;display:inline;font-size:1.25rem;margin-right:4px}
+ h3{break-after:avoid}
+ li,p{break-inside:avoid}
+}
+@media (prefers-color-scheme:dark){
+ :root{--paper:#1C1715;--card:#262019;--ink:#EFE4DB;--muted:#A9968A;--accent:#E08B54;--accent-soft:#3A2A21}
+ .recipe,.search,.tab,.chip,.filterbtn,.filtermenu{border-color:#3A302A}
+ .body{border-top-color:#33291F}
+}
+
+/* Category tabs, filters, serving stepper (added 19 Oct 2026) */
+.tabs{display:flex;gap:8px;overflow-x:auto;margin:4px 0 12px;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;font-family:system-ui,-apple-system,sans-serif;font-size:.9rem;padding:8px 14px;border-radius:999px;border:1px solid #E5D5CA;background:var(--card);color:var(--ink);cursor:pointer;white-space:nowrap}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.chip{font-family:system-ui,-apple-system,sans-serif;font-size:.78rem;padding:6px 12px;border-radius:999px;border:1px solid #E5D5CA;background:var(--card);color:var(--muted);cursor:pointer}
+.chip.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+.filterbar{position:relative;margin:0 0 18px}
+.filterbtn{font-family:system-ui,-apple-system,sans-serif;font-size:.85rem;padding:8px 14px;border-radius:999px;border:1px solid #E5D5CA;background:var(--card);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.filterbtn[aria-expanded="true"]{border-color:var(--accent);color:var(--accent)}
+.fcount{background:var(--accent);color:#fff;border-radius:999px;font-size:.7rem;padding:1px 7px;font-weight:600}
+.fcount:empty{display:none}
+.fcar{font-size:.7rem}
+.filtermenu{position:absolute;z-index:20;top:calc(100% + 6px);left:0;background:var(--card);border:1px solid #E5D5CA;border-radius:14px;padding:12px;display:flex;flex-wrap:wrap;gap:8px;box-shadow:0 10px 28px rgba(0,0,0,.14);min-width:220px}
+.filtermenu[hidden]{display:none}
+.coming{text-align:center;color:var(--muted);font-style:italic;padding:48px 0;font-size:1.05rem}
+</style></head><body><div class="wrap">
+<header><h1>Soraya's Kitchen</h1><p class="sub">Recipes from home and beyond · tap a recipe to open it, then share it</p></header>
+<input class="search" id="q" type="search" placeholder="Search recipes, ingredients, tags…" autocomplete="off">
+<nav class="tabs" id="tabs">
+<button class="tab on" data-cat="all">All</button>
+<button class="tab" data-cat="Breakfasts">Breakfasts</button>
+<button class="tab" data-cat="Mains">Mains</button>
+<button class="tab" data-cat="Snacks">Snacks</button>
+<button class="tab" data-cat="Sweets">Desserts</button>
+</nav>
+<div class="filterbar">
+<button class="filterbtn" id="filterbtn" type="button" aria-expanded="false">Filters<span class="fcount" id="fcount"></span><span class="fcar" aria-hidden="true">▾</span></button>
+<div class="filtermenu" id="filters" hidden>
+<button class="chip" data-filter="kids">Kids</button>
+<button class="chip" data-filter="low calorie">Low Calorie</button>
+<button class="chip" data-filter="high protein">High Protein</button>
+<button class="chip" data-filter="bahraini">Bahraini</button>
+</div>
+</div>
+<div id="out"></div>
+<p class="empty" id="empty">No recipes match that search.</p>
+<div id="toast"></div>
+<footer id="foot"></footer>
+</div>
+<script id="book" type="text/markdown"># Soraya's Kitchen
+
+_Recipes from home and beyond_
+</script>
+<script>
+var MD=document.getElementById('book').textContent;
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function inl(s){return esc(s).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/_(.+?)_/g,'<em>$1</em>');}
+var TAGS={Breakfasts:'Breakfast',Mains:'Main',Snacks:'Snack',Sweets:'Sweet'};
+var lines=MD.split('\n'),section=null,recipes=[],cur=null,block=null;
+function push(){if(cur&&block&&(block.items.length||block.paras.length))cur.blocks.push(block);block=null;}
+for(var i=0;i<lines.length;i++){
+ var L=lines[i],m;
+ if(m=L.match(/^# (Breakfasts|Mains|Snacks|Sweets)\s*$/)){push();section=m[1];continue;}
+ if(m=L.match(/^## (\d+)\.\s+(.+)$/)){push();cur={n:+m[1],title:m[2].trim(),section:section,blurb:'',meta:'',blocks:[],tags:[],serves:null};recipes.push(cur);continue;}
+ if(/^## /.test(L)){push();cur=null;continue;}
+ if(!cur)continue;
+ if(m=L.match(/^Tags:\s*(.+)$/i)){cur.tags=m[1].split(',').map(function(s){return s.trim().toLowerCase();}).filter(Boolean);continue;}
+ if(/^---\s*$/.test(L)){push();continue;}
+ if((m=L.match(/^_(.+)_$/))&&!cur.blurb){cur.blurb=m[1];continue;}
+ if(!cur.meta&&L.indexOf('·')!==-1&&!/^\s*[-*]\s/.test(L)&&!/^\s*\d+\.\s/.test(L)&&L.trim()){cur.meta=L.trim();var _sv=cur.meta.match(/(?:serves|makes)\s+(\d+)/i);if(_sv)cur.serves=+_sv[1];continue;}
+ if(m=L.match(/^\*\*(.+?)\*\*\s*$/)){push();block={title:m[1],items:[],paras:[]};continue;}
+ if(m=L.match(/^- (.+)$/)){if(!block)block={title:'',items:[],paras:[]};block.items.push({t:'li',v:m[1]});continue;}
+ if(m=L.match(/^\d+\.\s+(.+)$/)){if(!block)block={title:'',items:[],paras:[]};block.items.push({t:'oli',v:m[1]});continue;}
+ if(L.trim()){if(!block)block={title:'',items:[],paras:[]};block.paras.push(L.trim());continue;}
+}
+push();
+function rb(b){
+ var h=b.title?'<h3>'+esc(b.title)+'</h3>':'';
+ var ul=b.items.filter(function(x){return x.t==='li';}),ol=b.items.filter(function(x){return x.t==='oli';});
+ if(ul.length)h+='<ul>'+ul.map(function(x){return '<li>'+inl(x.v)+'</li>';}).join('')+'</ul>';
+ if(ol.length)h+='<ol>'+ol.map(function(x){return '<li>'+inl(x.v)+'</li>';}).join('')+'</ol>';
+ if(b.paras.length)h+=b.paras.map(function(p){return '<p>'+inl(p)+'</p>';}).join('');
+ return h;
+}
+var SHARE='<div class="share"><button class="sh sh-wa" data-act="whatsapp">Send on WhatsApp</button><button class="sh" data-act="share">Share…</button><button class="sh" data-act="copy">Copy</button><button class="sh" data-act="pdf">Save as PDF</button></div>';
+var last=null,html='';
+recipes.forEach(function(r){
+ if(r.section!==last){last=r.section;html+='<h2 class="section">'+esc(r.section)+'</h2>';}
+ html+='<details class="recipe" data-cat="'+esc(r.section)+'" data-tags="|'+r.tags.join('|')+'|" data-serves="'+(r.serves||'')+'" id="r'+r.n+'"><summary><span class="num">'+r.n+'</span><span class="titlewrap"><span class="title">'+esc(r.title)+'</span><span class="meta">'+esc(r.meta)+'</span></span><span class="tag">'+esc(TAGS[r.section]||'')+'</span><span class="chev" aria-hidden="true">›</span></summary><div class="body"><p class="blurb">'+inl(r.blurb)+'</p>'+r.blocks.map(rb).join('')+'</div></details>';
+});
+document.getElementById('out').innerHTML=html;
+if(!recipes.length){document.getElementById('out').innerHTML='<p class="coming">Recipes are being added — check back soon. 🍳</p>';}
+document.getElementById('foot').textContent=recipes.length?(recipes.length+' recipes · nutrition figures are approximate'):'';
+var q=document.getElementById('q'),cards=[].slice.call(document.querySelectorAll('.recipe')),empty=document.getElementById('empty');
+cards.forEach(function(c){c._ix=(c.textContent||'').toLowerCase().replace(/\s+/g,' ');c.querySelector('.body').insertAdjacentHTML('beforeend',SHARE);});
+var heads=[].slice.call(document.querySelectorAll('h2.section'));
+var tabsEl=document.getElementById('tabs'),filtersEl=document.getElementById('filters');
+var activeCat='all',activeFilters={};
+function apply(){var t=q.value.trim().toLowerCase(),shown=0;var fkeys=[];for(var k in activeFilters){if(activeFilters[k])fkeys.push(k);}
+ cards.forEach(function(c){var okText=!t||c._ix.indexOf(t)!==-1;var okCat=activeCat==='all'||c.getAttribute('data-cat')===activeCat;var tg=c.getAttribute('data-tags')||'';var okFil=fkeys.every(function(f){return tg.indexOf('|'+f+'|')!==-1;});var hit=okText&&okCat&&okFil;c.style.display=hit?'':'none';if(hit)shown++;if(!hit)c.open=false;});
+ heads.forEach(function(h){var any=false,el=h.nextElementSibling;while(el&&el.tagName!=='H2'){if(el.classList&&el.classList.contains('recipe')&&el.style.display!=='none'){any=true;break;}el=el.nextElementSibling;}h.style.display=any?'':'none';});
+ empty.style.display=(shown||!cards.length)?'none':'block';}
+tabsEl.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.tab');if(!b)return;activeCat=b.getAttribute('data-cat');[].forEach.call(tabsEl.children,function(x){x.className=(x===b?'tab on':'tab');});apply();});
+var fbtn=document.getElementById('filterbtn'),fcount=document.getElementById('fcount');
+function updCount(){var n=0;for(var k in activeFilters){if(activeFilters[k])n++;}fcount.textContent=n?String(n):'';}
+filtersEl.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.chip');if(!b)return;var f=b.getAttribute('data-filter');activeFilters[f]=!activeFilters[f];b.className=(activeFilters[f]?'chip on':'chip');updCount();apply();});
+fbtn.addEventListener('click',function(e){e.stopPropagation();var hidden=filtersEl.hasAttribute('hidden');if(hidden){filtersEl.removeAttribute('hidden');fbtn.setAttribute('aria-expanded','true');}else{filtersEl.setAttribute('hidden','');fbtn.setAttribute('aria-expanded','false');}});
+document.addEventListener('click',function(e){if(!filtersEl.hasAttribute('hidden')&&!filtersEl.contains(e.target)&&e.target!==fbtn&&!fbtn.contains(e.target)){filtersEl.setAttribute('hidden','');fbtn.setAttribute('aria-expanded','false');}});
+q.addEventListener('input',apply);
+apply();
+var toast=document.getElementById('toast'),tT;
+function say(m){toast.textContent=m;toast.classList.add('on');clearTimeout(tT);tT=setTimeout(function(){toast.classList.remove('on');},2200);}
+function textOf(card){
+ var out=[];
+ out.push(card.querySelector('.title').textContent.toUpperCase());
+ out.push(card.querySelector('.meta').textContent);out.push('');
+ out.push(card.querySelector('.blurb').textContent);
+ [].forEach.call(card.querySelector('.body').children,function(el){
+  if(el.classList.contains('blurb')||el.classList.contains('share'))return;
+  if(el.tagName==='H3'){out.push('');out.push(el.textContent.toUpperCase());}
+  else if(el.tagName==='UL'){[].forEach.call(el.children,function(li){out.push('• '+li.textContent);});}
+  else if(el.tagName==='OL'){var i=1;[].forEach.call(el.children,function(li){out.push((i++)+'. '+li.textContent);});}
+  else if(el.tagName==='P'){out.push(el.textContent);}
+ });
+ out.push('');out.push("From Soraya's Kitchen");
+ return out.join('\n');
+}
+if(!navigator.share){[].forEach.call(document.querySelectorAll('.sh[data-act=share]'),function(b){b.hidden=true;});}
+document.addEventListener('click',function(e){
+ var btn=e.target.closest?e.target.closest('.sh'):null;if(!btn)return;e.preventDefault();
+ var card=btn.closest('details.recipe'),text=textOf(card),title=card.querySelector('.title').textContent,act=btn.dataset.act;
+ if(act==='whatsapp'){window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');}
+ else if(act==='share'){navigator.share({title:title,text:text}).catch(function(){});}
+ else if(act==='copy'){
+  var done=function(){say('Recipe copied');};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,function(){fb(text,done);});}else{fb(text,done);}
+ } else if(act==='pdf'){
+  [].forEach.call(document.querySelectorAll('.recipe'),function(c){c.classList.remove('print-me');});
+  card.classList.add('print-me');card.open=true;
+  say('Choose "Save as PDF" in the print menu');
+  setTimeout(function(){window.print();},400);
+ }
+});
+function fb(text,done){var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done();}catch(err){say('Could not copy');}document.body.removeChild(ta);}
+window.addEventListener('afterprint',function(){[].forEach.call(document.querySelectorAll('.recipe'),function(c){c.classList.remove('print-me');});});
+</script></body></html>
