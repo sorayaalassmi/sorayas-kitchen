@@ -57,46 +57,31 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:28px;font
 }
 @media (prefers-color-scheme:dark){
  :root{--paper:#1C1715;--card:#262019;--ink:#EFE4DB;--muted:#A9968A;--accent:#E08B54;--accent-soft:#3A2A21}
- .recipe,.search,.tab,.chip,.filterbtn,.filtermenu{border-color:#3A302A}
+ .recipe,.search{border-color:#3A302A}
  .body{border-top-color:#33291F}
 }
 
-/* Category tabs, filters, serving stepper (added 19 Oct 2026) */
-.tabs{display:flex;gap:8px;overflow-x:auto;margin:4px 0 12px;padding-bottom:4px;-webkit-overflow-scrolling:touch}
-.tabs::-webkit-scrollbar{display:none}
-.tab{flex:0 0 auto;font-family:system-ui,-apple-system,sans-serif;font-size:.9rem;padding:8px 14px;border-radius:999px;border:1px solid #E5D5CA;background:var(--card);color:var(--ink);cursor:pointer;white-space:nowrap}
-.tab.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
-.filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
-.chip{font-family:system-ui,-apple-system,sans-serif;font-size:.78rem;padding:6px 12px;border-radius:999px;border:1px solid #E5D5CA;background:var(--card);color:var(--muted);cursor:pointer}
-.chip.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
-.filterbar{position:relative;margin:0 0 18px}
-.filterbtn{font-family:system-ui,-apple-system,sans-serif;font-size:.85rem;padding:8px 14px;border-radius:999px;border:1px solid #E5D5CA;background:var(--card);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
-.filterbtn[aria-expanded="true"]{border-color:var(--accent);color:var(--accent)}
-.fcount{background:var(--accent);color:#fff;border-radius:999px;font-size:.7rem;padding:1px 7px;font-weight:600}
-.fcount:empty{display:none}
-.fcar{font-size:.7rem}
-.filtermenu{position:absolute;z-index:20;top:calc(100% + 6px);left:0;background:var(--card);border:1px solid #E5D5CA;border-radius:14px;padding:12px;display:flex;flex-wrap:wrap;gap:8px;box-shadow:0 10px 28px rgba(0,0,0,.14);min-width:220px}
-.filtermenu[hidden]{display:none}
-.coming{text-align:center;color:var(--muted);font-style:italic;padding:48px 0;font-size:1.05rem}
+.note{background:var(--accent-soft);border-radius:14px;padding:14px 16px;margin:18px 0 0;font-size:.88rem}
+.note p{margin:0 0 8px}
+.note p:last-child{margin-bottom:0}
+.note ul{margin:0;padding-left:20px}
+.note li{margin-bottom:6px}
+.note li:last-child{margin-bottom:0}
+#tagbar{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 4px}
+.chip{font-family:system-ui,-apple-system,sans-serif;font-size:.78rem;padding:7px 13px;border-radius:999px;cursor:pointer;background:var(--card);color:var(--muted);border:1px solid #E5D5CA}
+.chip.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip:active{transform:scale(.97)}
+#count{font-family:system-ui,-apple-system,sans-serif;font-size:.75rem;color:var(--muted);margin:0 0 10px;min-height:1em}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.tg{font-family:system-ui,-apple-system,sans-serif;font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--accent-soft);padding:3px 8px;border-radius:999px}
+@media (prefers-color-scheme:dark){.chip{border-color:#3A302A}}
+@media print{.note,#tagbar,#count,.tags{display:none!important}}
 </style></head><body><div class="wrap">
-<header><h1>Soraya's Kitchen</h1><p class="sub">Recipes from home and beyond · tap a recipe to open it, then share it</p></header>
+<header><h1>Soraya's Kitchen</h1><p class="sub">Every recipe in one book · tap one to open it, then share it</p></header>
+<div class="note" id="note"></div>
 <input class="search" id="q" type="search" placeholder="Search recipes, ingredients, tags…" autocomplete="off">
-<nav class="tabs" id="tabs">
-<button class="tab on" data-cat="all">All</button>
-<button class="tab" data-cat="Breakfasts">Breakfasts</button>
-<button class="tab" data-cat="Mains">Mains</button>
-<button class="tab" data-cat="Snacks">Snacks</button>
-<button class="tab" data-cat="Sweets">Desserts</button>
-</nav>
-<div class="filterbar">
-<button class="filterbtn" id="filterbtn" type="button" aria-expanded="false">Filters<span class="fcount" id="fcount"></span><span class="fcar" aria-hidden="true">▾</span></button>
-<div class="filtermenu" id="filters" hidden>
-<button class="chip" data-filter="kids">Kids</button>
-<button class="chip" data-filter="low calorie">Low Calorie</button>
-<button class="chip" data-filter="high protein">High Protein</button>
-<button class="chip" data-filter="bahraini">Bahraini</button>
-</div>
-</div>
+<div id="tagbar"></div>
+<p id="count"></p>
 <div id="out"></div>
 <p class="empty" id="empty">No recipes match that search.</p>
 <div id="toast"></div>
@@ -104,25 +89,3476 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:28px;font
 </div>
 <script id="book" type="text/markdown"># Soraya's Kitchen
 
-_Recipes from home and beyond_
+_Every recipe in one book · updated 20 October 2026 · 75 recipes_
+
+---
+
+## How to use this book
+
+Tap a recipe to open it. The search box matches titles, ingredients and tags, and the tag buttons filter the whole book.
+
+- **Low calorie** means under 400 kcal a serving for a meal, or under 150 for a snack or dessert.
+- **High protein** means 20g or more a serving for a meal, or 10g or more for a snack or dessert.
+- Nutrition figures are estimates from standard ingredient values, so check your own labels for exact numbers.
+- Temperatures are for a conventional oven in °C. For a fan oven, reduce by about 20°C.
+
+# Breakfast
+
+## 1. Açaí Bowl
+
+_A single-packet Sambazon bowl, blended thick like soft-serve._
+
+Serves 1 · Prep 5 min
+
+Tags: Breakfast, Low calorie
+
+**Ingredients**
+
+- 1 Sambazon frozen açaí packet (unsweetened if you have it)
+- ½ small frozen banana
+- 1–2 tbsp milk — truly just a splash
+- Optional: 15g vanilla protein powder or 1 tbsp Greek yogurt
+- Toppings: sliced banana, berries, granola, peanut butter, coconut flakes
+
+**Method**
+
+1. **Chill the bowl** — 5 minutes in the freezer makes a real difference.
+2. **Break up the açaí** — Warm water over the sealed packet for 5 seconds, snap into chunks into the food processor with the banana.
+3. **Blend thick** — Pulse to rubble, add 1 tbsp milk (and the powder), run in short bursts, scraping down, until creamy soft-serve. Add the second tablespoon only if it genuinely won't come together.
+4. **Top and eat** — Into the chilled bowl, toppings on.
+
+**Nutrition (approx.)**
+
+Per 100g (base): ~105 kcal · 8g protein with powder.
+
+Whole base with powder: ~190 kcal · 15g protein. Without: ~130 kcal. Toppings extra.
+
+**Notes**
+
+Unsweetened packet ~70 kcal; Original with cane sugar ~100 kcal.
+
+The food processor beats a regular jug blender for thick, low-liquid mixtures. A tamper blender is better still; a bullet works with pulse-and-shake.
+
+## 2. Foul Medames
+
+_The breakfast bowl — warm fava beans with garlic, cumin, and lemon, topped with fresh tomato and parsley._
+
+Serves 2 · Prep 5 min · Cook 5 min
+
+Tags: Breakfast, Middle Eastern, Low calorie
+
+**Ingredients**
+
+- 1 can foul medames (~400g), drained but keep a little liquid
+- 1–2 tbsp tomato purée
+- 2 garlic cloves, crushed
+- ½ tsp ground cumin
+- ½ tsp Bahraini spice mix (بهارات بحرينية)
+- Juice of ½ lemon
+- 1 tbsp olive oil, plus a drizzle to finish
+- Salt and black pepper
+
+**To top**
+
+- 1 tomato, chopped
+- A handful of parsley, chopped
+- ½ small red onion, finely chopped
+- A drizzle of tahina (optional)
+- Khubz, and optionally a soft-boiled egg each
+
+**Method**
+
+1. **Warm** — Beans in a small pot with a splash of their liquid, the tomato purée, garlic, cumin, and Bahraini spice mix, about 5 minutes. The purée deepens the colour and rounds off the beans, the way it's usually served in Bahrain.
+2. **Mash** — About half the beans against the side of the pot — part-creamy, part-whole, never a purée.
+3. **Season** — Lemon, olive oil, salt, pepper.
+4. **Top and serve** — Shallow bowl, scatter over tomato, parsley, onion, finish with oil or tahina. Egg on top for protein; khubz alongside.
+
+**Nutrition (approx.)**
+
+Per 100g: ~120 kcal · 7g protein.
+
+Per serving: ~260 kcal · 15g protein — with an egg, ~330 kcal and 21g protein.
+
+Tahina: 1 tsp is ~30 kcal; 1 tbsp ~90 kcal.
+
+**Notes**
+
+Leftovers blitz into a dip with extra lemon and garlic, or fill a khubz wrap with a spoon of sahawig.
+
+## 3. Labneh with Olives
+
+_A mezze plate of labneh under olives, walnuts, and za'atar, finished with pomegranate molasses._
+
+Serves 6 as a mezze · Prep 10 min · No cooking
+
+Tags: Breakfast, Middle Eastern, Dips, Low calorie
+
+**Ingredients**
+
+- 1 tub labneh (~400g)
+- 70g black olives (½ cup), chopped
+- 60g walnuts (½ cup), chopped
+- 2 tbsp olive oil
+- 2 tsp za'atar
+- 2 tsp sumac
+- 1 tbsp pomegranate molasses
+- 1 tsp dried mint (optional)
+- Khubz, to serve
+
+**Method**
+
+1. **Spread the labneh** — Onto a flat plate, pushing it out to the edges with the back of a spoon and leaving a shallow well in the middle.
+2. **Scatter the olives** — Evenly over the surface.
+3. **Sprinkle the dry things** — Walnuts first, then the za'atar, sumac, and mint over the top. Keep them loose and separate rather than pre-mixed.
+4. **Drizzle the oil** — Olive oil over everything.
+5. **Drizzle the molasses** — Pomegranate molasses last, in thin lines rather than a pool.
+6. **Serve** — With khubz for scooping.
+
+**Nutrition (approx.)**
+
+Per 100g: ~245 kcal · 6.3g protein · 22g fat · 6.5g carbs.
+
+Per serving (⅙, ~100g): ~240 kcal · 6g protein.
+
+**Notes**
+
+From Soraya's recipe card.
+
+Everything goes on in layers rather than pre-mixed in a bowl. Once the olives and walnuts are coated in oil they clump, and trying to spread that lump drags and tears the labneh underneath.
+
+The molasses goes on last and stays on top — mixed in early it stains everything muddy brown and you lose the contrast against the white labneh.
+
+Walnuts and olive oil carry most of the calories, so a lighter version is mostly about the walnuts: halving them to 30g takes it to about 210 a serving.
+
+Toasting the walnuts in a dry pan for 3–4 minutes first is the difference between soft and fragrant.
+
+---
+
+## 4. Banana Oat Protein Bake
+
+_A microwave banana-bread-style bowl, ready in 2 minutes._
+
+Serves 1 · 410 kcal a bowl
+
+Tags: Breakfast, High protein
+
+**Ingredients**
+
+- 40 g oats (½ cup)
+- ½ ripe banana
+- 1 scoop vanilla protein powder (about 30 g)
+- Stevia to taste
+- ¼ tsp baking soda
+- 80 ml skimmed milk (⅓ cup)
+- Pinch of salt
+- ¼ tsp cinnamon
+- 1 tbsp chocolate chips
+- Spray oil, for greasing
+
+**Method**
+
+1. Blend everything except the chocolate chips for 15–20 seconds until smooth.
+2. Grease a microwave-safe bowl with spray oil, pour in the batter and top with the chocolate chips.
+3. Microwave for 1 minute, then in 30-second bursts until done. 1½ minutes gives a gooey texture and 2 minutes a cakey one.
+
+**Nutrition**
+
+Per bowl: 410 kcal · 34 g protein · 54 g carbs · 8 g fat
+
+Per 100g: 200 kcal · 17 g protein · 26 g carbs · 4 g fat
+
+**Notes**
+
+- Using 1 tbsp maple syrup or honey instead of stevia adds about 50 kcal.
+- The chocolate chips are about 60 kcal, so using half is an easy saving.
+
+# Mains
+
+## 5. Bahraini Tikka Lumee
+
+_Beef skewer cubes marinated in loomi (dried lime), garlic, and warm spices — Bahrain's beloved street food, eaten wrapped in khubz._
+
+Serves 4 · Prep 15 min · Marinate 1–4 hrs · Cook 10 min
+
+Tags: Mains, Bahraini, Low calorie, High protein, Air fryer
+
+**Ingredients**
+
+- 600g beef tenderloin or fillet, cut into 2.5cm cubes
+- 2 tbsp garlic and ginger paste
+- 2 tbsp ground loomi (dried lime)
+- 1 tbsp freshly ground black pepper
+- 1 tsp ground cumin
+- 1 tsp lemon salt (citric salt), or to taste
+- 2 tbsp olive oil
+
+**To serve**
+
+- Khubz or other flatbread
+- Raw red onion, sliced
+- Tomatoes, sliced
+- Bagel (بقل) — fresh young leeks, cut into long strips
+
+**Method**
+
+1. **Make the marinade** — Mix the garlic and ginger paste, ground loomi, black pepper, cumin, lemon salt, and olive oil into a thick paste.
+2. **Marinate** — Add the beef and massage the marinade in so every piece is coated. Cover and refrigerate at least 1 hour but no more than 3–4 hours — the acidity of the loomi will over-tenderise the beef if left longer.
+3. **Air fry** — Spread the cubes in a single layer in the air fryer basket. Air fry at 200°C for 8–10 minutes, shaking halfway, until browned outside and just slightly pink inside.
+4. **Serve** — Drizzle over any juices and serve hot with khubz, sliced onion, tomato, and strips of bagel. Eat it wrapped in the bread — the loomi is sharp on its own, and the bread is what makes it sing.
+
+**Variations**
+
+Oven roast: on a wire rack over a lined tray at 220°C fan for 10–12 minutes, turning once. For extra char, finish 1–2 minutes under a hot grill.
+
+Traditional barbecue: five cubes per skewer (soak wooden skewers 20 minutes first), charcoal at medium-high, 3–4 minutes per side.
+
+**Nutrition (approx.)**
+
+Per 100g (raw marinated weight): ~175 kcal · 19g protein · 10g fat · 2g carbs.
+
+Per serving (¼): ~290 kcal · 32g protein. Khubz and vegetables extra — roughly 250–300 kcal per large flatbread.
+
+**Notes**
+
+Loomi is whole lime boiled in salted water and sun-dried, giving the tikka its sharp, smoky-citrus tang. Find it ground at Middle Eastern grocers, or grind whole dried limes (seeds removed).
+
+## 6. Bahraini Chicken Saloona
+
+_The family saloona — a tamarind-and-black-lemon chicken stew loaded with vegetables, made light with water-caramelised onions and chicken breast._
+
+Serves 4 · Prep 20 min · Cook ~60 min
+
+Tags: Mains, Bahraini, Low calorie, High protein
+
+**Ingredients**
+
+- 500g chicken breast, cut into large 3–4cm chunks
+- 1½ tbsp olive oil
+- 1 red onion, chopped
+- 1 bay leaf
+- 1 tsp garlic and ginger paste
+- 1 tsp hasheesh paste
+- 2 black lemons (loomi), pierced
+- 2 very large tbsp tomato paste
+- 2 tomatoes, shredded
+- 40g tamarind, diluted in 2 cups warm water and strained
+- 1 bunch coriander, soaked and chopped, plus extra to garnish
+- Hard veggies, in chunks: 2 carrots, 2 potatoes, 200g green beans
+- Soft veggies, in chunks (a handful each): pumpkin, cauliflower, okra, green capsicum
+- Chicken stock or water, to cover (~750ml)
+
+**Spices**
+
+- Pinch of salt
+- ½ tsp cinnamon
+- ½ tsp black pepper
+- 1 tsp garam masala
+- 1 tsp Bahraini spice mix (بهارات بحرينية)
+- 1 tsp jiljilan and sanoot mix
+- ½ tsp turmeric
+
+**Method**
+
+1. **Caramelise the onion, water only** — Onion and bay leaf in a dry saucepan on medium-high. Cook until dry, add a dash of water, repeat about 6 times until browned and caramelised.
+2. **Brown the chicken** — Add the olive oil and both pastes, fry a few seconds, then the chicken, browning 2–3 minutes on the outside only. Lift out and set aside.
+3. **Spices in** — Add the pierced black lemons and all spices except salt; stir until fragrant.
+4. **Tomato** — Add the shredded tomato and tomato paste, mix well.
+5. **Hard veggies** — Add carrots, potatoes, green beans; cover with stock and cook medium-high until just tender, 7–10 minutes.
+6. **Soft veggies and tamarind** — Add coriander, soft veggies, salt, and strained tamarind water. Simmer low about 20 minutes, returning the chicken for the final 10–12.
+7. **Serve** — Squeeze the black lemons against the pot, garnish with coriander, serve with rice or khubuz argag.
+
+**Nutrition (approx.)**
+
+Per 100g: ~55 kcal · 5g protein · 1g fat · 6g carbs.
+
+Per serving (¼ pot, without rice): ~375 kcal · 32g protein.
+
+**Notes**
+
+From the family recipe card, scaled to 4 servings.
+
+The hard/soft veggie lists are a framework — use half of each hard veggie and a handful of each soft one you have.
+
+## 7. Paprika and Parmesan Chicken Nuggets
+
+_Juicy air-fried nuggets in a parmesan-oat crumb — no warm spice, just savoury. The oat coating from the original, with the dryness fixed._
+
+Serves 4 (makes ~20 nuggets) · Prep 20 min · Cook 8–10 min
+
+Tags: Mains, Low calorie, High protein, Air fryer
+
+**Ingredients**
+
+- 500g chicken thigh, boneless, in chunks
+- 120g Greek yogurt
+- 1 tsp olive oil
+- 1 tsp garlic and ginger paste
+- Squeeze of lemon juice
+- 1 tsp sweet paprika
+- ½ tsp salt, plus a pinch of black pepper
+- 80g rolled oats (20g for the panade, 60g for the coating)
+- 3 tbsp milk, for the panade
+- 25g parmesan, finely grated, for the coating
+- Olive oil spray
+- Dip: Greek yogurt, a tiny bit of garlic, squeeze of lemon
+
+**Method**
+
+1. **Make the panade** — Blitz all 80g of oats to fine crumbs. Soak 20g of the crumbs in the 3 tbsp of milk for 5 minutes — this is what keeps the nuggets moist.
+2. **Make the coating** — Mix the remaining 60g of crumbs with the parmesan and tip onto a plate.
+3. **Make the nugget mix** — Pulse the chicken with the yogurt, oil, garlic-ginger paste, lemon, paprika, salt, pepper, and the soaked panade to a coarse mince — pulse, don't purée. Paste cooks dry.
+4. **Shape and coat** — With damp hands, shape into about 20 nuggets, a little thicker than you think, and roll in the parmesan crumb.
+5. **Air fry** — Spray lightly and air fry at 190°C for 8–10 minutes, flipping halfway, until golden and just cooked — 74°C inside, no further. Oven: 220°C on a wire rack over a tray, 15–18 minutes.
+6. **Serve** — Rest 2 minutes, then serve with the yogurt dip.
+
+**Nutrition (approx.)**
+
+Per 100g: ~180 kcal · 20g protein · 8g fat · 9g carbs.
+
+Per serving (5 nuggets): ~250 kcal · 29g protein.
+
+**Notes**
+
+Why this version: the first used breast with only 60g of yogurt at 200°C for 12 minutes — three reasons to be dry. Thigh, a milk-soaked oat panade, double the yogurt, and a lower, shorter cook fix it.
+
+Freeze cooked nuggets flat, then bag — 2 months, reheating from frozen in the air fryer at 180°C for 5–6 minutes. The air fryer beats the oven for reheating.
+
+## 8. Mini Kofta Meatballs
+
+_Little kofta with zucchini and carrot hidden inside, served with a yogurt-mint dip._
+
+Serves 4 (makes ~24 minis) · Prep 20 min · Cook 8–18 min
+
+Tags: Mains, Middle Eastern, Low calorie, High protein, Air fryer
+
+**Ingredients**
+
+- 500g lean beef mince (5% fat) or chicken mince
+- 1 small zucchini (~150g), grated and squeezed very dry
+- 1 carrot, finely grated
+- ½ white onion, grated
+- 1 egg
+- 20g rolled oats, blitzed to crumbs
+- 1 tsp garlic and ginger paste
+- 2 tbsp chopped parsley or coriander
+- ½ tsp ground cumin
+- ½ tsp paprika
+- ¼ tsp cinnamon
+- ½ tsp salt, plus pepper
+- Dip: 150g Greek yogurt, dried mint, squeeze of lemon, pinch of salt
+
+**Method**
+
+1. **Squeeze the zucchini** — Squeeze the grated zucchini very hard in a clean towel. This is what keeps the meatballs from going soggy.
+2. **Mix** — Combine everything with the mince, mixing the meat by hand so it doesn't toughen.
+3. **Roll** — Roll into about 24 mini meatballs.
+4. **Cook** — Air fryer: 190°C for 8–10 minutes, shaking halfway. Oven: 200°C for 15–18 minutes on a lined tray, no turning needed, with 2 minutes under the grill at the end for colour.
+5. **Serve** — Stir the dip together and serve alongside.
+
+**Nutrition (approx.)**
+
+Per 100g: ~110 kcal · 15g protein · 4g fat · 5g carbs.
+
+Per serving (6 meatballs, without dip): ~220 kcal · 29g protein. The dip adds ~25 kcal.
+
+**Notes**
+
+Air fryer gives a slightly better crust; the oven fits all 24 on one tray, which wins for a double batch. Inside, they're identical.
+
+Freeze cooked meatballs flat, then bag — 2 months, reheating from frozen in the air fryer at 180°C in 5–6 minutes.
+
+## 9. Lean Beef Burgers
+
+_A full burger build with a hard-seared lean patty, lighter burger sauce, and all the fixings._
+
+Serves 4 · Prep 15 min · Cook ~10 min
+
+Tags: Mains, High protein
+
+**Patties**
+
+- 600g lean beef mince (5% fat)
+- ½ white onion, finely grated
+- 1 tsp garlic and ginger paste
+- 1 tsp paprika, ½ tsp salt, a good grind of black pepper
+- 1 tsp oil, for the pan
+
+**Lighter burger sauce**
+
+- 4 tbsp Greek yogurt
+- 1 tbsp light mayo
+- 1 tbsp ketchup
+- 1 tsp mustard
+- 1 small pickle, finely chopped, plus a pinch of paprika
+
+**Build**
+
+- 4 whole wheat burger buns (~60g each)
+- 4 slices reduced-fat cheddar (20g each) — optional
+- Lettuce, sliced tomato, red onion rings, extra pickles
+
+**Method**
+
+1. **Make the patties** — Mix the mince gently with the grated onion, paste, and seasoning — don't overwork it. Shape 4 patties slightly wider than the buns and press a dimple in the centre of each so they stay flat.
+2. **Fry** — Nonstick or stainless on medium-high; stainless needs a proper preheat (a drop of water should bead and dance), then add the oil. Fry 3–4 minutes per side without pressing, to 75°C inside. In stainless they stick at first and release once the crust forms — if you have to pry, they're not ready. Cheese on for the final minute, pan covered.
+3. **Toast the buns** — Cut-side down in the meat juices, 30–60 seconds.
+4. **Build** — Sauce, lettuce, patty with cheese, tomato, onion, pickles, more sauce, lid on.
+
+**Nutrition (approx.)**
+
+Per 100g: ~165 kcal · 17g protein · 6g fat · 12g carbs.
+
+Per full burger with cheese and sauce: ~460 kcal · 45g protein. Without cheese: ~400 kcal.
+
+**Notes**
+
+Raw patties freeze well between parchment squares — cook from frozen, adding 3–4 minutes.
+
+Smash-style minis for the kids: halve each patty, flatten thin, fry 5–6 minutes total.
+
+## 10. Molokhia with Vermicelli Rice
+
+_Soraya's molokhia in three parts: the silky green soup, the sizzling garlic-coriander tasha poured over the top, and vermicelli rice underneath._
+
+Serves 4 · Prep 15 min (plus 30 min rice drying) · Cook ~40 min
+
+Tags: Mains, Middle Eastern
+
+**Part 1 · Molokhia**
+
+- 400g minced molokhia, frozen
+- 2 garlic cloves, minced
+- ½ tsp ground coriander
+- 2–3 cups chicken stock
+- 1½ tbsp ghee
+- 1 shredded tomato
+
+1. **Garlic in ghee** — Ghee in the pot, then the minced garlic; cook 30 seconds.
+2. **Coriander** — Add the ground coriander and mix.
+3. **Stock** — Add 2–3 cups chicken stock and bring to the boil.
+4. **Molokhia** — Add the frozen molokhia, medium heat until melted, then low; add the tomato.
+5. **Simmer** — 5–8 minutes, using a ladle to stir and mix well.
+
+**Part 2 · Tasha**
+
+- 1 tbsp ghee
+- 4 cloves garlic, chopped
+- 1½ tsp ground coriander
+
+1. **Fry and pour** — While the molokhia simmers, melt the ghee in a small pan, add the garlic and coriander, fry until gold and bubbly, then pour over the finished molokhia in the serving bowl.
+
+**Part 3 · Vermicelli Rice**
+
+- 1 cup Egyptian or Japanese sushi rice
+- ⅓ cup short vermicelli
+- 250ml chicken stock + 250ml water
+- 1 tbsp ghee/butter
+- 1 tbsp vegetable oil
+- 1 tsp salt
+
+1. **Wash and dry** — Wash the rice 3 times till clear and leave to dry at least 30 minutes in a sieve.
+2. **Ghee and oil** — Into a pot with a tight-fitting lid on medium heat.
+3. **Toast** — Once melted, fry the vermicelli 2–3 minutes until half golden. Add the rice and fry until pearlescent.
+4. **Flatten** — Flatten into an even layer.
+5. **Stock** — Pour in stock and water until covered by 2cm above rice level; add salt.
+6. **Boil** — Lid on, until the water has evaporated.
+7. **Steam** — Lowest setting for 20 minutes.
+
+**Nutrition (approx.)**
+
+Molokhia — per 100g: ~35 kcal · 1.5g protein. Per serving (¼ pot): ~100 kcal · 4g protein.
+
+Tasha — per 100g: ~525 kcal (nearly all ghee). Per serving (¼): ~40 kcal.
+
+Vermicelli rice — per 100g cooked: ~150 kcal · 3g protein. Per serving (¼ pot): ~290 kcal.
+
+Full plate (¼ of all three): ~430 kcal · 10g protein.
+
+**Notes**
+
+From Soraya's handwritten cards. Keep the molokhia at a gentle simmer — hard boiling can make it separate from the broth.
+
+## 11. Shish Tawook — 7 Spices
+
+_Juicy chicken thigh skewers in a yogurt, lemon, fresh garlic, and sabaa baharat marinade._
+
+Serves 4 · Prep 15 min · Marinate 2–8 hrs · Cook 12–14 min
+
+Tags: Mains, Middle Eastern, Low calorie, High protein, Air fryer
+
+**Ingredients**
+
+- 600g boneless, skinless chicken thighs, in 3–4cm cubes
+- ½ cup plain yoghurt (~120g)
+- Juice of ½ lemon
+- 1½ tbsp olive oil
+- 1 tbsp tomato paste
+- 2 garlic cloves, freshly crushed
+- 1 tbsp paprika
+- 1 tbsp baharat (Arabic 7 spice)
+- 1 tsp ground cumin
+- 1 tsp dried oregano
+- 1 tsp ground cardamom
+- 1 tsp ground coriander (optional, but it softens the cumin)
+- 2 tsp salt and ½ tsp black pepper
+- To serve: khubz, yogurt-garlic dip, salad, pickles
+
+**Method**
+
+1. **Marinate** — Whisk everything except the chicken smooth, then massage into the thighs. Refrigerate 2–8 hours; overnight is the maximum before the texture goes soft.
+2. **Skewer** — Thread on, not too tightly packed.
+3. **Cook** — Air fryer 200°C for 12–14 minutes, turning halfway. Grill or barbecue 4–5 minutes per side. Stainless pan, preheated, 3–4 minutes per side without crowding. Charred edges, 75°C inside.
+4. **Serve** — Rest a few minutes, serve with khubz, dip, salad, pickles — or wrapped with bagel greens.
+
+**Nutrition (approx.)**
+
+Per 100g cooked: ~155 kcal · 19g protein.
+
+Per serving (¼, without bread): ~265 kcal · 33g protein.
+
+**Notes**
+
+The marinade follows the video recipe, with oil trimmed from ¼ cup to 1½ tbsp — the yoghurt does the tenderising. 2 tsp salt is moderate; go to 3 if you like it saltier.
+
+Raw marinated chicken freezes 2 months; thaw overnight and cook as usual.
+
+## 12. Sahawig — Mandi Tomato Sauce
+
+_The sharp, spicy tomato salsa (also called daggus) served alongside mandi — restaurant-red._
+
+Makes ~2 cups · Prep 10 min · Rest 10 min
+
+Tags: Mains, Bahraini, Dips, Low calorie
+
+**Ingredients**
+
+- 4 very ripe tomatoes (~400g), quartered — or canned whole tomatoes, picked ripe and redder
+- 1 tbsp tomato paste
+- 1–2 red chilies (seeds out for mild)
+- 2 garlic cloves
+- A small handful of fresh coriander
+- ½ tsp paprika
+- Juice of ½ lemon or lime
+- ½ tsp salt
+- Optional: ½ tsp ground cumin, pinch of black pepper
+
+**Method**
+
+1. **Chop the aromatics** — Pulse the garlic and chili first so they chop fine.
+2. **Pulse** — Add everything else and pulse briefly to a coarse, chunky salsa — long blending whips in air and turns it pink.
+3. **Rest and taste** — 10 minutes for the flavours to marry, then season.
+
+**Nutrition (approx.)**
+
+Per 100g: ~24 kcal · 1g protein. Whole batch: ~120 kcal.
+
+**Notes**
+
+The restaurant-red secrets are built in: tomato paste, red chili rather than green, paprika, very ripe tomatoes, a modest hand with the coriander, short pulses.
+
+For a deeper cooked daggus, simmer 5 minutes. A spoon of the mandi chicken's drippings is the restaurant trick.
+
+Keeps 3–4 days.
+
+## 13. Hidden Veg Tomato Sauce
+
+_A big batch of pasta sauce with the vegetables blended in until they disappear — made for the freezer._
+
+Makes ~2.3 litres (about 9 portions) · Prep 15 min · Cook ~55 min
+
+Tags: Mains, Low calorie
+
+**Ingredients**
+
+- 1 tbsp olive oil
+- 1 large white onion, chopped
+- 4 garlic cloves, freshly crushed
+- 2 carrots (~200g), chopped
+- 2 celery sticks, chopped
+- 1 red capsicum, chopped
+- 1 zucchini (~200g), chopped
+- 2 × 400g cans chopped tomatoes
+- 4 tbsp tomato paste
+- 250ml water or stock
+- 1 tsp dried oregano, 1 tsp dried basil
+- 1 tsp salt, ½ tsp black pepper
+- 1 bay leaf
+- 1 tsp balsamic vinegar, to finish
+
+**Method**
+
+1. **Chop** — Roughly, in the food processor; it gets blended later.
+2. **Onion and garlic** — Soften the onion in the oil 5 minutes, garlic for a minute.
+3. **Hard vegetables** — Carrots, celery, capsicum, 8–10 minutes until softening. This stage is where the sweetness comes from.
+4. **Zucchini and paste** — 4 minutes, letting the paste darken and caramelise.
+5. **Simmer** — Tomatoes, liquid, herbs, bay, seasoning. Part-covered 30–40 minutes until thick and glossy.
+6. **Blend and finish** — Remove the bay leaf, blend smooth, stir in the balsamic.
+
+**Batch and freeze**
+
+Cool completely, freeze in portion tubs or flat bags — 3 months. Ice cube trays for small portions. Reheat from frozen, covered, low, with a splash of water. Fridge 5 days.
+
+**Nutrition (approx.)**
+
+Per 100g: ~35 kcal · 1.5g protein. Per portion (~250g): ~90 kcal.
+
+**Notes**
+
+Brown onion turns sweetest over a long simmer; red goes greyish, white stays sharp. Fresh garlic, not garlic-ginger paste — ginger pulls it toward a curry base.
+
+Meat-free on purpose so it stays flexible.
+
+## 14. Slow Soffritto Tomato Base
+
+_The Italian way round: vegetables cooked down slowly into whole peeled tomatoes, simmered until the oil separates, then blended smooth for the freezer._
+
+Makes ~2 litres (about 8 portions) · Prep 20 min · Cook ~1 hr 50 min
+
+Tags: Mains, Low calorie
+
+**Ingredients**
+
+- 3 tbsp olive oil
+- 2 large white onions (~350g), finely chopped
+- 3 carrots (~250g), finely chopped
+- 3 celery sticks (~180g), finely chopped
+- 6 garlic cloves, crushed — or 6 frozen garlic cubes
+- 1½ tbsp tomato paste
+- 2 × 400g cans whole peeled tomatoes, not chopped
+- 1 × 700g jar passata
+- 150ml water
+- 1 bay leaf, 1 sprig rosemary
+- ½ tsp salt, to finish
+- Fresh basil, torn, at serving
+
+**Method**
+
+1. **Chop** — Onion, carrot and celery fine in the food processor. It gets blended later, so size matters less than evenness.
+2. **Soffritto** — All three into the oil on low with a pinch of salt, 25–30 minutes until soft, sweet and collapsing. Not browned. This is the whole recipe; rushing it to five minutes is the difference between flat and deep.
+3. **Garlic and paste** — Both in together, 2 minutes, until the paste darkens and smells nutty. Frozen garlic goes in at this stage, not earlier — it is already crushed and catches fast.
+4. **Tomatoes** — Crush the whole tomatoes in your hand straight into the pan. Passata, then the water swirled round the cans and jar. Bay and rosemary.
+5. **Simmer** — Lowest heat, part-covered, 1 hr 15 min. Done when the oil separates and pools slightly at the edges — the traditional sign, worth waiting for.
+6. **Blend and season** — Remove the bay and the rosemary stalk, blend smooth, then salt lightly. Basil only at the plate.
+
+**Batch and freeze**
+
+Cool completely, then flat bags stacked like books — they thaw in minutes. 6 months. No basil, no cream, no cheese before freezing; basil blackens and dairy splits. Reheat low with a splash of water. Fridge 5 days.
+
+**Nutrition (approx.)**
+
+Per 100g: ~50 kcal · 1.2g protein. Per portion (~250g): ~125 kcal.
+
+**Variations**
+
+Chilli and parsley stirred through a portion makes arrabbiata. Brown mince separately and add a portion for a fast ragù. Lentils or mushrooms for a meat-free one. Loosened with stock it is tomato soup; reduced down thicker it is a pizza base.
+
+Rose harissa is the best of these. Warm 1 tsp oil in the pan, add 2 tsp rose harissa and let it sizzle 30 seconds until the oil runs red, then pour in 500ml of defrosted base. Blooming it matters — there are whole spices in there that need heat to open up. Lemon at the end, and a spoonful of yoghurt or cream at the plate, which turns it silky and slightly pink. Start at 2 tsp per 500ml and taste; it tips into tasting soapy if you overdo it. Roasted red pepper alongside it is very good.
+
+Plain harissa is fiercer and far less fragrant. Keep that one for shakshuka and the chilli.
+
+**Notes**
+
+Whole peeled cans, never chopped. Chopped cans usually carry calcium chloride, a firming salt that stops the cubes breaking down, which is exactly what you want them to do here. The fruit in them is lower grade too. Crushing whole ones by hand takes thirty seconds.
+
+Passata is only sieved tomatoes — read the back and buy one listing tomatoes alone. It is there for smooth volume; the canned whole tomatoes are there for depth. Using only cans gives a looser sauce that needs another half hour.
+
+White onion because that is what Bahrain sells. Brown is sweeter over a long simmer, so give the white an extra five minutes in the oil to make up for it. Red goes grey.
+
+Salted lightly on purpose — season the plate, not the batch, so it suits him and still tastes right to you.
+
+Harissa is not a substitute for the tomato paste. It is a chilli paste, not concentrated tomato, so swapping it in loses the body and the savoury backbone. Add it as well, or better, at the portion.
+
+Blended smooth like #12, but a different sauce underneath: no capsicum or zucchini, whole tomatoes instead of chopped, and nearly two hours instead of forty minutes. #12 is the weeknight one; this is the Sunday one.
+
+## 15. Chilli con Carne
+
+_Built on a defrosted portion of #13, so the onion, garlic and tomato work is already done. One pan, an hour, better the next day._
+
+Serves 4 · Prep 10 min · Cook ~1 hr
+
+Tags: Mains, High protein
+
+**Ingredients**
+
+- 1 tbsp olive oil
+- 500g beef mince, 15–20% fat
+- 1 large red capsicum (~150g), chopped — straight from frozen is fine
+- 1 packet chilli con carne spice mix (the 500g-of-mince size)
+- 1 tbsp tomato paste
+- 500ml Slow Soffritto Tomato Base (#13), defrosted
+- 200ml beef stock
+- 1 × 400g can kidney beans, drained and rinsed
+- 1 tsp cocoa, or 1 square dark chocolate
+- Juice of ½ lime, to finish
+- Fresh coriander, to serve
+
+**Method**
+
+1. **Brown the mince** — Hot pan, two batches, and leave it alone until it catches and colours. Crowding it steams it grey, which is the main reason chilli comes out tasting of nothing. Set aside.
+2. **Capsicum** — Into the fat, 5 minutes. From frozen it will throw water; let that cook off before going on.
+3. **Bloom the spices** — Spice mix and tomato paste into the oil for a minute, until fragrant and darkened. Packet mixes taste dusty and raw if they go straight into liquid.
+4. **Base and stock** — Mince back in, then the tomato base and the stock. Simmer uncovered 40 minutes, stirring now and then.
+5. **Beans** — Last 20 minutes only. An hour of simmering turns them to mush.
+6. **Finish** — Cocoa stirred through, then the lime off the heat. Taste before adding any salt — most mixes are already salted.
+
+**To serve**
+
+Rice, with yoghurt or sour cream on the side for anyone who wants it cooler. Grated cheese and coriander on top.
+
+**Batch and freeze**
+
+Cool and freeze in portions, 3 months. Genuinely better on day two — make it ahead if you can. Fridge 4 days.
+
+**Nutrition (approx.)**
+
+Per 100g: ~120 kcal · 7g protein. Per portion (~400g): ~490 kcal · 29g protein.
+
+**Notes**
+
+The base is doing the job of an onion, garlic, a tin of tomatoes and twenty minutes of chopping. Without it, soften a chopped onion and two garlic cloves at step 2 and use a 400g can of tomatoes plus 100ml more stock in place of the 500ml.
+
+Not lean mince. At 5% it goes to gravel over a long simmer; the fat is what keeps it tender and carries the spice.
+
+Cocoa is not for chocolate flavour — it rounds the sauce out and takes the edge off the tomato. A square of dark chocolate does the same.
+
+Packet mixes land mild to medium, so this is usually fine for him as it comes. Serve his before the lime if he objects to sour.
+
+## 16. Fresh Avocado Rice Paper Rolls
+
+_Uncooked, single-wrapped, eaten the same day. The avocado goes face-down against the wrapper so it shows through._
+
+Makes 8 · Prep 20 min · No cooking
+
+Tags: Mains, Low calorie
+
+**Ingredients**
+
+- 1 large avocado, ripe but firm
+- Juice of ½ lime
+- 1 carrot (~80g), julienned
+- 80g red cabbage, finely shredded
+- ½ cucumber, seeds scraped out, julienned
+- A handful of mint and coriander leaves
+- 8 rice paper sheets (22cm)
+
+**Dipping sauce**
+
+- 2 tbsp hoisin
+- 1 tbsp peanut butter
+- Warm water, to loosen
+
+**Method**
+
+1. **Avocado** — Slice thin and turn gently in the lime juice. It stops the browning, and the roll needs the acid anyway.
+2. **Soak** — One sheet only, 5–8 seconds, turning, until fully floppy. There is no frying later to soften it, so what you dip is what you eat.
+3. **Layer** — Avocado slices face down just above the centre, herbs over them, then the carrot, cabbage and cucumber in a tight log below.
+4. **Roll** — Sides in, then roll firmly. The avocado ends up pressed against the wrapper and shows through, which is the whole look of it.
+5. **Sauce** — Loosen the hoisin and peanut butter with warm water to a pouring consistency.
+
+**To serve**
+
+Same day, within a couple of hours. Keep them under a damp tea towel and not touching — rice paper fuses to rice paper.
+
+**Nutrition (approx.)**
+
+Per 100g: ~120 kcal · 1.5g protein. Per roll: ~85 kcal.
+
+**Notes**
+
+One sheet here, not two. Double-wrapping is only for frying.
+
+Cucumber works precisely because nothing is heated. It would flood a fried roll.
+
+They do not refrigerate. The wrapper turns hard and rubbery within a few hours, so make them to eat rather than ahead.
+
+Ripe but firm. A soft avocado smears instead of slicing, and the look of the roll depends on clean slices.
+
+## 17. Air Fryer Veggie Rolls
+
+_Carrot, red cabbage, pepper and kurrat, double-wrapped and sprayed. The crunchy, bright one._
+
+Makes 12 · Prep 25 min · Cook 12 min
+
+Tags: Mains, Low calorie, Air fryer
+
+**Ingredients**
+
+- 1 carrot (~80g), finely julienned
+- 100g red cabbage, shredded very fine
+- 1 bell pepper (~150g), finely diced
+- 4 spring onions, or a generous handful of local leeks — كراث (~35g) — sliced finely across the leaves
+- 2 garlic cloves, crushed
+- 1 tsp grated ginger
+- 1 tbsp soy sauce
+- ½ tsp white pepper
+- 1 tsp cornflour
+- 24 rice paper sheets (22cm)
+- Light olive oil spray
+
+**Dipping sauce — nuoc cham**
+
+Dissolve 1½ tbsp sugar in 4 tbsp warm water. Stir in 2 tbsp fish sauce, the juice of a lime and 1 minced garlic clove. Sliced red chilli at the end, after pouring his out.
+
+**Method**
+
+1. **Cornflour first** — Toss it through the dry vegetables before anything wet goes near them. It coats the shreds and catches the water they give up in the heat.
+2. **Mix** — Garlic, ginger, soy and white pepper through.
+3. **Double wrap** — Dip a sheet for 2 seconds, lay it on a damp tea towel, dip a second and lay it straight on top. Two seconds, no more; they finish softening on the towel.
+4. **Roll** — 2 tbsp of filling along the lower third, sides in, roll tight without straining.
+5. **Rest** — Seam down, not touching, uncovered, 10 minutes. This dries the surface so it blisters instead of sticking.
+6. **Air fry** — Spray the basket properly, rolls in a single layer with gaps between them, spray the tops. 190°C for 10–12 minutes, turning at halfway. They puff and blister, which is the texture you are after.
+
+**Nutrition (approx.)**
+
+Per 100g: ~160 kcal · 2.5g protein. Per roll: ~80 kcal.
+
+**Notes**
+
+Two sheets per roll, always. A single layer tears and goes leathery with this little oil.
+
+Light or regular olive oil spray, not extra virgin — it smokes and turns bitter at 190°C.
+
+Rice paper welds itself to metal and to itself. Spray the basket, leave gaps.
+
+Spring onions are the original, but the local leek — كراث, kurrat or Egyptian leek — is if anything better here. It is grown for its leaves rather than a white stem, so it comes finer and sharper than an imported leek and sits very close to spring onion. Slice across the leaf; lengthways it is stringy.
+
+None of the four need pre-cooking, which is the whole reason they were chosen.
+
+## 18. Pan-Fried Veggie Rolls
+
+_Sweet potato, carrot, red cabbage and kurrat in a non-stick pan. Sweeter and more filling than #16._
+
+Makes 12 · Prep 25 min · Cook 8 min
+
+Tags: Mains, Low calorie
+
+**Ingredients**
+
+- 1 small sweet potato (~150g), coarsely grated
+- 1 carrot (~80g), julienned
+- 80g red cabbage, shredded very fine
+- 4 spring onions, or a generous handful of local leeks — كراث (~35g) — finely sliced
+- 2 garlic cloves, crushed
+- 1 tsp grated ginger
+- 1 tbsp soy sauce
+- ½ tsp white pepper
+- 1 tsp cornflour
+- 24 rice paper sheets (22cm)
+- Olive oil spray
+
+**Method**
+
+1. **Cornflour first** — Through the dry vegetables, before the soy.
+2. **Mix** — Garlic, ginger, soy and white pepper through.
+3. **Double wrap** — Dip a sheet 2 seconds, onto a damp tea towel, second sheet straight on top.
+4. **Roll** — 2 tbsp of filling along the lower third, sides in, roll tight.
+5. **Rest** — Seam down, not touching, uncovered, 10 minutes.
+6. **Fry** — Non-stick on medium, never high; rice paper scorches before it crisps in a hot pan. Spray the pan, rolls in with space between them, spray the tops. Turn every minute or two for 6–8 minutes until golden and blistered all over.
+7. **Drain** — On a wire rack, not kitchen paper, which traps steam underneath. They crisp further in the first minute off the heat.
+
+**To serve**
+
+Nuoc cham, as for #16.
+
+**Nutrition (approx.)**
+
+Per 100g: ~175 kcal · 2.5g protein. Per roll: ~90 kcal.
+
+**Notes**
+
+The grated sweet potato is doing more than flavour. It absorbs what the cabbage and carrot release, which is the job glass noodles do in a traditional roll — there are none here on purpose.
+
+Medium heat and patience. High heat browns the outside before the middle is even hot.
+
+Keep them apart in the pan. Rice paper fuses to rice paper on contact.
+
+Assembled rolls freeze raw on a tray, then bagged, for a month. Straight from frozen, same method, 2–3 minutes longer.
+
+## 19. Prawn Rice Paper Rolls
+
+_Raw prawn chopped small so it cooks through in the time the wrapper takes to blister. Fish sauce in the filling to echo the nuoc cham._
+
+Makes 6 generous rolls · Prep 20 min · Cook 10 min
+
+Tags: Mains, Low calorie, High protein
+
+**Ingredients**
+
+- 300g raw prawns, thawed weight — buy about 400g frozen — peeled and chopped into 1cm pieces
+- 1 carrot (~80g), finely julienned
+- 4 spring onions, or a generous handful of local leeks — كراث (~35g) — finely sliced
+- 2 garlic cloves, crushed
+- 1 tsp grated ginger
+- 1 tbsp fish sauce
+- ½ tsp white pepper
+- 1 tsp cornflour
+- 12 rice paper sheets (22cm) — two per roll, they are double-wrapped
+- Olive oil spray
+
+**Method**
+
+1. **Thaw and dry** — Thaw overnight in the fridge, or 10 minutes in a colander under cold running water, never warm. Pat dry, spread on kitchen paper and leave 15 minutes, pressing once or twice. They are the main source of water in this filling, and wet prawn steams the roll from the inside.
+2. **Mix and chill** — Everything but the wrappers, 15 minutes in the fridge. Cold filling rolls far more tightly.
+3. **Double wrap** — Dip a sheet for 2 seconds, lay it on a damp tea towel, dip a second and lay it straight on top.
+4. **Roll** — A heaped 2 tbsp, about 50g, along the lower third, sides in, roll tight without straining. Six rolls from this filling, not twelve; spread any thinner and you get two prawns a roll.
+5. **Rest** — Seam down, not touching, uncovered, 10 minutes.
+6. **Fry** — Non-stick on medium. Spray the pan, rolls in with space between them, spray the tops. Turn every minute or two for 8–10 minutes, longer than the vegetable rolls because the prawn goes in raw. They feel firm through the wrapper when they are done.
+7. **Drain** — On a wire rack, not kitchen paper.
+
+**Air fryer**
+
+Spray the basket well, rolls in a single layer with gaps, spray the tops. 190°C for 14–16 minutes, turning at halfway. Longer than the vegetable rolls on two counts: these are fatter, and the prawn goes in raw. Cut one open at 14 minutes and check it is opaque all the way through.
+
+**To serve**
+
+Nuoc cham, as for #16.
+
+**Nutrition (approx.)**
+
+Per 100g: ~165 kcal · 14g protein. Per roll: ~130 kcal · 11g protein.
+
+**Notes**
+
+Chop to about 1cm. Larger pieces are still translucent in the middle by the time the wrapper has gone too dark.
+
+Raw prawns, not pre-cooked ones. Cooked prawn turns rubbery over the eight minutes the wrapper needs.
+
+Frozen is fine, and usually better than what is sitting on the fish counter, which was frozen anyway. Allow about a third extra by weight, because the ice glaze goes down the sink.
+
+Some frozen prawns are treated to hold extra water — they look unusually plump and feel slippery. Those need the full fifteen minutes on kitchen paper, and toss the chopped prawn with the cornflour straight away to bind whatever is left.
+
+Do not freeze these assembled if the prawns were frozen and thawed. The vegetable rolls freeze raw; these do not.
+
+Six fat rolls, not twelve thin ones. 300g of prawn spread over twelve works out at about two prawns each, which is not worth the wrapping.
+
+Same double wrap and same ten-minute rest as the vegetable rolls. The rules do not change because the filling did.
+
+## 20. Protein Kousa Mahshi
+
+_Zucchini stuffed with spiced meat and no rice, simmered in red tomato sauce until tender._
+
+Serves 4 · Prep 30 min · Cook 30–35 min (hob) or ~50 min (oven)
+
+Tags: Mains, Middle Eastern, Low calorie, High protein
+
+**Zucchini and filling**
+
+- 8–10 small pale green zucchini (kousa), about 1kg
+- 600 g lean beef or lamb mince (5%)
+- 150 g of the scooped zucchini flesh, finely chopped
+- 1 egg white
+- 1 tsp 7 spices (sabaa baharat)
+- ½ tsp cinnamon
+- ½ tsp salt, ¼ tsp black pepper
+- 1 tbsp tomato paste
+
+**Red sauce**
+
+- 1 tbsp olive oil
+- 1 white onion, finely chopped
+- 3 garlic cloves, crushed
+- 3 tbsp tomato paste
+- 400 g can chopped tomatoes
+- 750 ml water or stock (600 ml if baking)
+- ½ tsp 7 spices, ½ tsp salt
+- 1 tsp dried mint, crushed between your fingers
+
+**Method**
+
+1. **Core the zucchini** — Cut off the stem ends and hollow each with a corer or narrow peeler, leaving walls about 5 mm thick and the base intact. Too thin and they split. Keep the flesh.
+2. **Mix the filling** — Raw mince, 150 g of the chopped flesh, egg white, spices and tomato paste. Mix with a light hand; working it hard makes it bouncy.
+3. **Stuff them full** — Right to the top this time. With no rice there is nothing to swell, so the old three-quarters rule doesn't apply and an under-filled one just collapses.
+4. **Start the sauce** — Soften the onion, add garlic, then tomato paste for 2 minutes. Add tomatoes, water, spices and salt, and bring to a simmer.
+5. **Cook on the hob** — Nestle the zucchini in, open ends up, just covered. Cover and simmer gently 30–35 minutes until a knife slides in easily. Don't stir; turn the pot occasionally.
+6. **Or bake** — Pack them into a deep dish, pour the sauce over so they are two-thirds submerged, cover tightly with foil, and bake at 190°C for 45–50 minutes, uncovering for the last 10–15 to colour. Use 600 ml liquid rather than 750, since a covered dish barely evaporates.
+7. **Finish** — Stir the dried mint into the sauce for the last 5 minutes. Rest 10 minutes, then serve with the sauce spooned over and yogurt alongside.
+
+**Nutrition (approx.)**
+
+Per serving (¼): ~312 kcal · 37g protein.
+
+Per 100g: ~62 kcal · 7.4g protein.
+
+Per stuffed zucchini: ~105 kcal · 15g protein, before sauce.
+
+**Notes**
+
+The zucchini flesh and the egg white are not optional. They bind the filling and hold its moisture; meat on its own shrinks into dense little pebbles. The flesh costs about 25 kcal across the whole dish and is already to hand from the coring.
+
+Don't salt the chopped flesh before it goes in. It will weep and loosen the filling.
+
+Lean mince matters more now than it did. With the rice gone, fat is the only thing left that can make this heavy.
+
+Start checking at 30 minutes on the hob. With no rice to swell, it is done sooner than a stuffed zucchini usually is.
+
+For the traditional version: drop the mince to 300 g, add 100 g washed short-grain rice, leave out the egg white and flesh, and stuff only three-quarters full. 35–45 minutes on the hob, and about 330 kcal and 22g protein a serving.
+
+Some families finish with lemon or a spoon of pomegranate molasses.
+
+## 21. Kids' Bolognaise
+
+_A long-simmered sauce with all the vegetables grated in so they vanish — the family batch recipe, made for the freezer._
+
+Makes ~6 portions of sauce · Prep 20 min · Cook 2–3 hrs
+
+Tags: Mains, Low calorie
+
+**Ingredients**
+
+- 250g beef mince
+- 250g pork mince (or all beef — see notes)
+- 2 white onions, grated
+- 1 celery stick, grated
+- 1 zucchini, grated
+- 1 carrot, grated
+- 4 garlic cloves
+- 2 cans tomatoes
+- 2 tbsp balsamic vinegar
+- 1 big tbsp tomato purée
+- Water (¼ to ½ a can)
+- Salt and pepper
+- A little olive oil
+- To serve: spaghetti and parmesan
+
+**Method**
+
+1. **Brown the meat** — A little olive oil in the frying pan, add the meats, cook until brown.
+2. **Grated veg** — Add all the grated vegetables and the garlic; cook 10 minutes.
+3. **Tomatoes** — Add the cans and the balsamic, mush it all together. Swill ¼ to ½ a can of water round the tins to get the last of the sauce in.
+4. **Season** — Tomato purée, pepper, salt.
+5. **Simmer low** — 2–3 hours on low heat.
+6. **Finish with pasta** — Add the cooked pasta plus ½ cup of pasta water and mix it all together. Serve with parmesan.
+
+**Nutrition (approx.)**
+
+Sauce only, per 100g: ~115 kcal · 6.5g protein.
+
+Per portion of sauce (⅙, ~230g): ~270 kcal · 15g protein. Pasta extra — 75g dry spaghetti ~265 kcal; protein pasta gives ~20g protein instead of 9g.
+
+**Notes**
+
+Freezes 3 months — portion flat so it thaws fast, and it tastes better the second time.
+
+All beef works if skipping the pork: use 500g and add a splash of milk near the end, the traditional trick for tender meat.
+
+A handful of red lentils (~50g) melts invisibly into the sauce, stretching it and adding fibre and protein.
+
+A parmesan rind and a bay leaf while it simmers add savoury depth for nothing.
+
+Good over protein pasta or ordinary spaghetti — the same sauce either way.
+
+The 2–3 hours is the point. Anything shorter tastes sharp.
+
+## 22. Chicken Katsu Sushi Rolls
+
+_Air-fried katsu strips rolled with cucumber and avocado — sushi night without sashimi-grade fish._
+
+Makes 4 rolls (serves 4) · Prep 30 min · Cook 12 min
+
+Tags: Mains, High protein, Air fryer
+
+**Sushi rice**
+
+- 250g Egyptian or Japanese short-grain rice
+- 3 tbsp rice vinegar
+- 1 tbsp sugar
+- 1 tsp salt
+
+**Katsu**
+
+- 400g chicken breast or thigh, in finger-width strips
+- 20g plain flour
+- 1 egg, beaten
+- 60g panko (or blitzed rolled oats)
+- Salt and pepper, olive oil spray
+
+**To roll**
+
+- 4 nori sheets
+- 1 cucumber, in long batons
+- 1 avocado, sliced
+- Japanese mayo, soy sauce, pickled ginger
+
+**Method**
+
+1. **Rice** — Rinse until the water runs clear, then cook. While warm, fold through the vinegar, sugar, and salt, and cool to room temperature — never chill it, or it goes hard.
+2. **Katsu** — Season the strips, dredge flour, egg, panko. Spray with oil and air fry at 200°C for 10–12 minutes until deep golden.
+3. **Spread** — Nori shiny side down on the mat, wet hands, thin layer of rice, leaving a 2cm bare strip along the far edge. About 150g cooked rice per roll (120g for a thinner, lighter roll).
+4. **Fill and roll** — Katsu, cucumber, avocado in a line across the near third, a squeeze of mayo, then roll away from you firmly, dampening the bare strip to seal.
+5. **Cut** — Rest seam-side down a minute, then cut with a very sharp wet knife, wiping between cuts.
+
+**Nutrition (approx.)**
+
+Per 100g: ~175 kcal · 10g protein.
+
+Per roll: ~615 kcal · 37g protein. Rice spread thinner with extra katsu alongside: about 500 kcal with 50g protein.
+
+**Notes**
+
+Rice ratio: 75g dry needs 90ml water, giving ~180g cooked. 250g dry gives ~600g cooked, enough for four rolls.
+
+Weigh the rice into portions before rolling, kept under a damp cloth — eyeballing it is how the first roll ends up enormous and the last one bare.
+
+Rolling together is half the fun with a child — plain cucumber and avocado rolls and a bowl of edamame for him.
+
+## 23. Adana Shish Kebab with Peppers
+
+_The fuller Turkish version, with peppers and garlic chopped into the mince rather than just spices. Written mild so he can eat it._
+
+Serves 4 · Prep 30 min (plus 1 hr chilling) · Cook 12 min
+
+Tags: Mains, Middle Eastern, High protein, Air fryer
+
+**Kebab**
+
+- 500g beef mince, around 20% fat, coarsely minced once — or 60% beef to 40% lamb
+- 8 small frying peppers (~100g), finely chopped
+- 1 red capsicum (~150g), finely chopped
+- 4 garlic cloves, finely chopped
+- 1 tbsp sweet paprika
+- 2 tsp salt
+- Lavash, khubz or tortillas, to serve
+
+**Sumac onions**
+
+- 2 red onions, sliced into half-moons
+- A small handful of parsley, chopped
+- 1½ tbsp ground sumac
+- 2 tbsp olive oil
+- A pinch of salt
+
+**Method**
+
+1. **Skewers** — Soak wooden ones in water for an hour, or use flat metal ones. Flat, not round; round skewers let the meat spin.
+2. **Chop by hand** — Peppers and garlic very fine, with a knife. A food processor turns them to slurry and the water makes the kebab slide off the skewer. Pat them dry if they look wet.
+3. **Knead** — Mince, peppers, garlic, paprika and salt in a bowl, worked hard with your hand for a full 5 minutes until it turns sticky and holds together in one mass. This is the step that makes it cling to the skewer.
+4. **Chill** — Covered, 1 hour minimum. Cold mince shapes; warm mince falls apart.
+5. **Shape** — Wet hands, take a handful, and press it along the skewer into a long flat strip about 1cm thick.
+6. **Cook** — Charcoal is best; see below. Otherwise a very hot griddle pan, 5–6 minutes a side, or the air fryer at 200°C for 12 minutes, turning at halfway.
+7. **Onions** — Toss everything together and leave 10 minutes while the kebabs cook.
+8. **Serve** — Slide off the skewer onto warm lavash, pile the onions over.
+
+**On the barbecue**
+
+Let the charcoal burn down to grey ash with no flames showing. Adana wants steady heat, not fire.
+
+Rest the skewer ends on the sides of the barbecue so the meat hangs about 10cm above the coals without touching the grate — that is how it is done over a mangal, and it is why the kebab does not stick. If your grill will not allow it, lay them straight onto clean, properly hot bars.
+
+Leave them completely alone for the first 2–3 minutes. The crust has to set before you move them, or the meat tears and drops into the coals. After that, turn every 2 minutes, 8–10 minutes in all.
+
+The fat will drip and flare. Keep one corner with no coals under it to move them to.
+
+No oil on the meat. The fat in the mince is all it needs.
+
+Put whole tomatoes and long green peppers on at the same time; they take about as long. Slide everything onto warm lavash and leave it a minute so the bread takes up the juices.
+
+**Nutrition (approx.)**
+
+Per 100g: ~190 kcal · 10g protein. Per serving (¼, without bread): ~425 kcal · 22g protein. Add ~150 kcal for a lavash.
+
+**Notes**
+
+Four peppers in the original list and only one of them is hot. The red one is sweet, the small green ones are Turkish frying peppers — mild, grown for the pan rather than for burning — and the flakes are pul biber, which is fruity rather than fierce. Only the single red chilli brings real heat, and it is left out here.
+
+To make it properly hot, add 1–2 finely chopped red chillies and swap the paprika for 2 tbsp pul biber. If you only have ordinary chilli flakes, use a third as much plus paprika to make up the colour.
+
+Look for the long pale green frying pepper, often sold simply as "fry chilli". Taste a sliver first, as batches vary and some come through hot.
+
+Not lean mince. At 20% fat it stays juicy and grips the skewer; lean mince dries and drops off.
+
+Minced once and coarse. Twice-minced beef goes pasty and the kebab turns dense.
+
+Adapted from Refika's Adana shish kebab. The original is 250g of mince; this is doubled and made mild.
+
+## 24. Prawn Dumplings
+
+_Steamed dumplings of chopped prawn, ginger, and spring onion — light, fast, very high protein for the calories._
+
+Makes ~24 (serves 4) · Prep 30 min · Cook 8 min
+
+Tags: Mains, Low calorie
+
+**Ingredients**
+
+- 300g raw prawns, peeled and deveined
+- 24 round dumpling or wonton wrappers
+- 3 spring onions, finely chopped
+- 1 tbsp grated ginger
+- 1 garlic clove, crushed
+- 1 tsp sesame oil
+- 1 tbsp soy sauce
+- 1 tsp cornflour
+- Pinch of white pepper and salt
+- Dipping sauce: soy, rice vinegar, a little chili oil, sliced spring onion
+
+**Method**
+
+1. **Chop, don't blend** — Roughly chop two-thirds of the prawns by hand and pulse the rest to a paste. The paste binds; the chopped pieces give bite.
+2. **Mix** — Combine with the spring onion, ginger, garlic, sesame oil, soy, cornflour, pepper, salt. Chill 15 minutes.
+3. **Fill** — A teaspoon in the centre of each wrapper, wet the rim, fold into a half-moon and pleat or press firmly. Keep unused wrappers under a damp cloth.
+4. **Steam** — 6–8 minutes over boiling water, until the wrappers turn translucent. Line the steamer with baking paper or cabbage leaves.
+5. **Or pan-fry** — Potsticker style: base-down in a little oil 2 minutes, add 3 tbsp water, cover, steam 5 minutes until the water has gone and the bottoms are crisp.
+6. **Serve** — Immediately. Dumplings wait for no one.
+
+**Nutrition (approx.)**
+
+Per 100g: ~140 kcal · 11g protein.
+
+Per serving (6 dumplings): ~205 kcal · 17g protein.
+
+**Notes**
+
+No steamer basket? A metal colander over a pot with a lid works, or use the pan-fry method.
+
+Freeze raw on a tray, then bag — 2 months. Steam from frozen, adding 3 minutes; never thaw first.
+
+Prawns are the leanest filling there is, so the wrappers carry most of the calories.
+
+## 25. Pancit Canton
+
+_Filipino stir-fried noodles with chicken and a mountain of vegetables, built around a single pack of noodles._
+
+Serves 4 · Prep 20 min · Cook 20 min
+
+Tags: Mains, Low calorie, High protein
+
+**Ingredients**
+
+- 227 g pancit canton noodles (one pack, dry — do not soak)
+- 300 g chicken breast or thigh, sliced thin
+- 1 tbsp vegetable oil
+- 3 garlic cloves, minced
+- 1 small red onion, sliced
+- 1 carrot, cut into matchsticks
+- ¼ small cabbage (~200 g), shredded
+- ½ red bell pepper, sliced
+- 125 g pak choy, roughly chopped
+- 700 ml chicken stock
+- 3 tbsp soy sauce
+- 2 tbsp oyster sauce
+- ½ tbsp sesame oil
+- 2 tsp corn starch mixed with 1 tbsp cold water
+- Salt and plenty of black pepper
+- Lemon wedges, to serve
+
+**Method**
+
+1. **Sear the chicken** — Heat the oil in your largest pan or wok. Season the chicken with salt and pepper and sear in batches over high heat until just cooked, then put it on a plate. Cooking it separately keeps it from turning grey and tough later.
+2. **Aromatics** — Soften the onion 2 minutes, then the garlic for 30 seconds. Add the carrots and stir-fry 2 minutes.
+3. **Build the sauce** — Pour in the stock, soy sauce, oyster sauce and sesame oil, and bring to a rolling boil.
+4. **Noodles** — Add them straight from the packet, pushing them under the liquid. They soften within a minute, then you can toss them properly. Simmer 5–8 minutes, turning gently with tongs, until they have drunk nearly all the liquid.
+5. **Finish** — Fold in the cabbage, bell pepper and pak choy for the last 2 minutes, then return the chicken with its juices. If it looks wet, stir in the corn starch slurry and cook 1 minute; if it goes dry before the noodles are tender, add hot stock a splash at a time.
+6. **Serve** — Season generously with pepper, with lemon to squeeze over.
+
+**Nutrition (approx.)**
+
+Per serving (¼, about 360g): ~392 kcal · 26g protein.
+
+Per 100g: ~108 kcal · 7.1g protein.
+
+**Notes**
+
+Never pre-soak canton noodles — they are pre-cooked and will turn to mush.
+
+Use a bigger pan than feels necessary. Even half a kilo of noodle and vegetables is a lot to toss.
+
+Vegetables late and brief, so they stay crisp against the soft noodles.
+
+For a more chicken-forward version, take it to 450 g — about 460 kcal and 34g protein a serving.
+
+Reheats well with a splash of water.
+
+## 26. Souvlaki with Greek-Herb Pita
+
+_Lemon-oregano chicken skewers with soft homemade pita baked with herbs through the dough._
+
+Serves 4 (makes 8 pitas) · Prep 25 min · Rise 1½ hrs · Marinate 2–8 hrs · Cook 12–14 min
+
+Tags: Mains, High protein, Air fryer
+
+**Chicken**
+
+- 700g boneless chicken thigh, in 3cm cubes
+- 2 tbsp olive oil
+- Juice of 1 lemon, plus the zest
+- 3 garlic cloves, crushed
+- 1 tbsp dried oregano
+- 1 tsp dried thyme
+- 1 tsp sweet paprika
+- 1 tsp salt, ½ tsp black pepper
+- 1 tbsp red wine vinegar
+
+**Greek-herb pita**
+
+- 400g strong white flour, plus extra for dusting
+- 7g instant yeast
+- 1 tsp sugar
+- 1 tsp salt
+- 250ml warm water
+- 2 tbsp olive oil
+- 2 tsp dried oregano, 1 tsp dried thyme, 1 tsp dried rosemary, finely crumbled
+
+**To serve**
+
+- Tzatziki: 300g Greek yogurt, ½ cucumber grated and squeezed dry, 1 garlic clove, 1 tbsp lemon juice, dill
+- Tomato, red onion, lettuce, a little feta
+
+**Method**
+
+1. **Marinate** — Mix everything for the chicken and refrigerate 2–8 hours. Overnight is the limit; the lemon starts breaking the meat down past that.
+2. **Make the dough** — Whisk the yeast and sugar into the warm water and leave 5 minutes until foamy. Mix the flour, salt, and all the dried herbs, then pour in the yeast water and oil. Knead 8–10 minutes to a smooth, slightly tacky dough. Cover and rise 1 hour, until doubled.
+3. **Shape** — Knock back, divide into 8, roll each into a ball, and rest 20 minutes under a cloth. Roll each out to about 18cm and 5mm thick.
+4. **Bake the pita** — Oven as hot as it goes, 250°C, with a heavy tray or stone preheating inside. Bake 3–4 minutes until puffed and just blistered. Straight into a clean towel as they come out — trapped steam is what keeps them soft.
+5. **Cook the chicken** — Thread onto skewers. Air fryer 200°C for 12–14 minutes, turning halfway. Grill or barbecue 4–5 minutes a side. You want charred edges and 75°C inside.
+6. **Serve** — Rest the chicken a few minutes, then build: pita, tzatziki, chicken, salad, a crumble of feta.
+
+**Nutrition (approx.)**
+
+Chicken — per 100g cooked: ~175 kcal · 21g protein.
+
+Pita — per 100g: ~275 kcal · 8g protein. One pita (~85g): ~235 kcal.
+
+Per full souvlaki (one pita, ¼ of the chicken, tzatziki, salad): ~570 kcal · 42g protein.
+
+**Notes**
+
+The herbs go into the dough rather than on top, so they don't scorch at 250°C.
+
+Pita freezes well — cool completely, stack with parchment between, and warm from frozen in a dry pan for a minute a side.
+
+No stone or heavy tray? A preheated upside-down baking sheet works. The heat hitting the base fast is what makes them balloon.
+
+## 27. Kidney Bean and Corn Salad
+
+_A five-minute salad straight from two tins, for when a meal needs something fresh alongside it._
+
+Serves 4 as a side · Prep 10 min · No cooking
+
+Tags: Mains, Low calorie
+
+**Ingredients**
+
+- 1 tin red kidney beans (~400g, ~240g drained), rinsed well
+- 1 tin sweetcorn (~325g, ~285g drained), drained
+- ½ red onion, finely diced
+- 1 red bell pepper, diced
+- 2 tomatoes, deseeded and diced
+- Large handful coriander or parsley, chopped
+- Juice of 1 lime
+- 1 tbsp olive oil
+- ½ tsp ground cumin
+- Salt and black pepper
+
+**Method**
+
+1. **Rinse** — Rinse the kidney beans under cold water until the water runs clear. The tinned liquid is what makes bean salads taste tinny.
+2. **Combine** — Everything into a bowl and toss.
+3. **Rest** — 10 minutes before serving, so the onion softens into the lime.
+
+**Nutrition (approx.)**
+
+Per 100g: ~95 kcal · 4g protein · 3g fat · 14g carbs.
+
+Per serving (¼): ~150 kcal · 6g protein.
+
+**Notes**
+
+Better on day two, and it keeps 3 days in the fridge — worth making the full amount even for one meal.
+
+Add 100g feta or a tin of tuna and it becomes a meal on its own rather than a side.
+
+## 28. Tuscan Chicken
+
+_Seared chicken in a garlic cream sauce with sundried tomatoes and spinach, tossed through pasta._
+
+Serves 2 · Prep 10 min · Cook 20 min
+
+Tags: Mains, High protein
+
+**Ingredients**
+
+- 500g chicken breast
+- 1 tbsp olive oil
+- 120ml heavy cream (½ cup)
+- 60ml chicken broth (¼ cup)
+- ½ tbsp minced garlic
+- ½ tsp Italian seasoning
+- 25g parmesan, grated (¼ cup)
+- 30g chopped spinach (½ cup)
+- 35g sundried tomatoes (¼ cup), sliced
+- 100g pasta, any shape
+- Salt and black pepper
+
+**Method**
+
+1. **Pasta on** — Salted water, cook to just under al dente, and save a mugful of the water before draining.
+2. **Butterfly and sear** — Slice the breasts horizontally into thin cutlets so they cook fast and stay juicy. Season well. Olive oil in a wide pan on medium-high, 3–4 minutes a side to 74°C inside. Lift out and rest.
+3. **Garlic and tomatoes** — Same pan, heat down to medium. Garlic and sundried tomatoes for 30 seconds, no longer — garlic burns fast in a hot pan.
+4. **Deglaze** — Broth in, scraping up everything stuck to the base. That is where the flavour is.
+5. **Cream** — Add the cream and Italian seasoning and simmer 2–3 minutes, until it coats a spoon.
+6. **Finish the sauce** — Off the heat, stir in the parmesan until smooth, then the spinach just until it wilts. Boiling it after the cheese goes in turns it grainy.
+7. **Combine** — Slice the chicken, return it with the drained pasta, and loosen with pasta water a splash at a time until the sauce clings.
+
+**Nutrition (approx.)**
+
+Per 100g: ~200 kcal · 17g protein · 9.5g fat · 10.5g carbs.
+
+Per serving (½): ~830 kcal · 70g protein.
+
+**Notes**
+
+From Soraya's recipe card.
+
+Lighter version: swap half the cream for evaporated milk and drop the parmesan to 15g, which takes about 80 kcal off a serving — roughly 750 — with the protein untouched.
+
+The sauce is generous for 100g of pasta — take the chicken to 1kg and it feeds four off the same amount of sauce.
+
+Sundried tomatoes packed in oil are softer and richer. The dry-packed kind want 10 minutes in hot water first.
+
+## 29. Avgolemono
+
+_The Greek egg-and-lemon chicken soup — orzo and shredded thigh in a broth thickened off the heat with whisked eggs and lemon._
+
+Serves 6 · Prep 20 min · Cook ~1 hr
+
+Tags: Mains, High protein
+
+**Base**
+
+- 5–8 bone-in chicken thighs (~1kg)
+- 1 tbsp olive oil
+- 1 tbsp Italian seasoning
+- 1 whole white onion, diced
+- 10 garlic cloves, minced
+- 1 cup celery, diced (~120g)
+- 1 carrot, diced
+- 2 litres chicken broth
+- 1 cup orzo pasta (~200g)
+- 2 bay leaves
+- Salt and black pepper
+
+**Mixture**
+
+- 4 eggs
+- 3 lemons, juiced (~150ml)
+- Zest of 1 lemon
+- A few ladles of the hot broth
+
+**Method**
+
+1. **Brown the chicken** — Season the thighs and brown them skin-side down in the oil, 5–6 minutes, until the skin is properly golden. Lift out.
+2. **Soften** — Onion, celery, and carrot into the fat, 6–8 minutes. Then the garlic and Italian seasoning for a minute.
+3. **Simmer** — Chicken back in with the broth and bay leaves. Gentle simmer 35–40 minutes, until the meat pulls away from the bone.
+4. **Shred** — Lift the chicken out. Discard the skin, bones, and bay leaves, and shred the meat.
+5. **Orzo** — Into the simmering broth for 8–9 minutes, until just tender. Taste for salt now, before the lemon goes in.
+6. **Temper the mixture** — Whisk the eggs hard until pale and frothy, then whisk in the lemon juice and zest. Add hot broth one ladle at a time, whisking constantly, until you have added three or four. Rushing this is how it curdles.
+7. **Off the heat** — Pull the pot off the heat completely, then pour the mixture back in, stirring. It must not boil again or the eggs scramble.
+8. **Serve** — Return the shredded chicken, season, and add more lemon to taste. It thickens as it sits.
+
+**Nutrition (approx.)**
+
+Per 100g: ~72 kcal · 4.8g protein.
+
+Per bowl (⅙, ~560g): ~405 kcal · 27g protein.
+
+**Notes**
+
+From Soraya's recipe card.
+
+Never let it boil after the eggs go in. That is the whole technique, and it is why the pot comes off the heat first.
+
+Reheat gently, well below a simmer. It splits if you push it.
+
+The orzo keeps drinking broth as it stands, so leftovers turn almost stew-thick — loosen with extra broth rather than water.
+
+A good one for the plan: 27g protein for ~405 kcal, and one pot covers three meals plus his.
+
+---
+
+## 30. Arabic Chicken Pasta Salad
+
+_Built in two halves: a base that keeps three days in one container, and the soft things added fresh to each bowl. One session, three lunches._
+
+Makes 3 lunches · Prep 35 min · Cook 15 min
+
+Tags: Mains, Middle Eastern, High protein, Air fryer
+
+**For the container**
+
+- 180g protein pasta, dry
+- 2 large carrots (~200g), shredded
+- 150g red cabbage, shredded very fine
+- ½ red onion, or white, sliced paper thin
+- 1 tsp sumac and the juice of ½ lemon, for the onion
+- A large handful of parsley and a smaller one of mint, chopped
+- 1 tsp olive oil
+- Salt
+
+**To add per bowl — buy these too**
+
+- 1 head Boston lettuce, about a third per bowl
+- 1 tbsp pumpkin seeds, toasted in a dry pan
+
+**Za'atar yogurt dressing**
+
+- 200g 0% Greek yogurt
+- 1 tsp tahini
+- ½ tbsp olive oil
+- 1 tbsp lemon juice
+- 1 tbsp za'atar
+- 1 tsp sumac
+- 1 small garlic clove, crushed
+- ½ tsp salt
+- 2–4 tbsp cold water
+
+**Chicken**
+
+- 450g chicken breast
+- 3 tbsp 0% Greek yogurt
+- 2 tsp 7 spices
+- ¼ tsp black lemon powder (loomi)
+- 1 garlic clove, crushed
+- Olive oil spray
+- ½ tsp salt
+
+**Method**
+
+1. **Sumac onion first** — Toss the sliced onion with the sumac and lemon juice and leave it while you do everything else. It softens from raw and sharp into something closer to a pickle.
+2. **Marinate the chicken** — Yogurt, 7 spices, loomi, garlic and salt. Flatten any thick ends with a rolling pin so the pieces are an even thickness. Thirty minutes minimum, a few hours better.
+3. **Pasta** — Cook a minute under the packet time and rinse under cold water straight away. Drain properly.
+4. **Build the base** — Pasta, carrot, cabbage, sumac onion, herbs, olive oil and a little salt into one container. No dressing goes in.
+5. **Cook the chicken** — Spray the basket and the chicken with olive oil. Air fryer at 190°C, 12–15 minutes depending on thickness, turning once. Rest 10 minutes before slicing, then chill in its own container.
+6. **Dressing** — Whisk everything smooth, then water in a teaspoon at a time until it pours thickly off the spoon. Into a jar.
+7. **Each bowl** — Torn lettuce in the bottom, a scoop of base, sliced chicken over, toasted pumpkin seeds, dressing spooned on at the table.
+
+**Nutrition (approx.)**
+
+Per 100g: ~115 kcal · 11g protein. Per bowl: ~640 kcal · 60g protein.
+
+**Notes**
+
+Lettuce and seeds never go in the container. Butterhead collapses within hours of meeting salt or dressing, and the seeds go soft and chewy. Both stay out until the bowl is built.
+
+The dressing stays in its own jar for the same reason. Yogurt pulls water out of shredded carrot and cabbage, and by day two a pre-dressed batch is watery with the dressing sliding off it.
+
+Protein pasta keeps softening for days, so start it firm. A minute under the packet time, then rinsed cold to take the starch off, or it clumps.
+
+One small garlic clove, no more. Raw garlic in yogurt strengthens each day; pleasant on Monday is fierce by Wednesday.
+
+Flatten the breast. The thin end goes dry waiting for the thick end, which is breast's main failing in meal prep. The yogurt marinade is doing the rest of that work.
+
+No pomegranate molasses on purpose, though it is good on chicken elsewhere. Between the loomi, sumac, za'atar and lemon the bowl is already sour from four directions, and the carrot is carrying the sweetness.
+
+If Boston is not in, romaine is the better substitute than iceberg and actually suits the za'atar better; two-thirds of a head, sliced in ribbons. Little gem is the same leaf smaller. Salanova butterhead is the same thing under a brand name.
+
+It is a full meal rather than a light lunch. Dropping the pasta to 120g takes off about 70 kcal a bowl and the chicken to 360g another 60.
+
+---
+
+## 31. Brothy Red Curry Prawn Noodles
+
+_A thin, fragrant coconut broth rather than a thick curry, ladled over noodles in the bowl. Fifteen minutes once everything is cut._
+
+Serves 2 · Prep 10 min · Cook 15 min
+
+Tags: Mains, High protein
+
+**Ingredients**
+
+- 300g raw king prawns
+- 150g silken tofu
+- 150g pak choy
+- 100g baby asparagus
+- 30g Thai red curry paste
+- 200g full-fat coconut milk (half a 400ml tin)
+- 250ml water
+- 2 tbsp fish sauce
+- 10g white sugar
+- 1 lime
+- 15g fresh coriander
+
+**For the bowls — one or the other**
+
+- 100g dried rice noodles
+- Or 2 × 200g packs konjac noodles
+
+**Method**
+
+1. **Noodles first** — Rice noodles into a heatproof bowl, covered with boiling water, 4 minutes until softened, then drained and rinsed under cold water. They carry on softening in the hot broth later, so stopping them cold now is the point. Konjac is handled differently — see the notes.
+2. **Cut everything** — Baby pak choy quartered lengthways through the root; a full-size head separated into diagonally sliced stems and torn leaves. Woody ends snapped off the asparagus. Silken tofu cubed in the tub and lifted out on the knife rather than tipped about.
+3. **Crack the coconut milk** — Half the coconut milk, 100g, into a heavy-bottomed pan over medium heat for 4–5 minutes, until the fat separates out and it smells nutty. Full-fat does this readily where light will not, and it is the step the whole base is built on.
+4. **Bloom the paste** — Curry paste into the split fat, 4–5 minutes, stirring regularly, until fragrant. Sugar, another 2 minutes. Stir through half the fish sauce.
+5. **Build the broth** — The rest of the coconut milk and the water in. Bring to a simmer.
+6. **Everything in** — Asparagus, pak choy stems and prawns for 3 minutes. Slide the tofu in for the last minute and leave it alone, because silken breaks the moment it is stirred. Pak choy leaves go in off the heat, where thirty seconds of residual warmth is plenty.
+7. **Season** — Half the lime squeezed in, the remaining fish sauce, then taste. Pastes vary a lot in salt and heat, so this is where it gets fixed rather than earlier.
+8. **Build the bowls** — Noodles divided between two bowls, broth ladled over. Lime wedges and a handful of chopped coriander.
+
+**Nutrition (approx.)**
+
+Broth and everything in it, noodles aside — per bowl (½): ~400 kcal · 40g protein. Per 100g: ~65 kcal · 6.6g protein.
+
+Noodles on top, per bowl: 50g dried rice noodles adds ~180 kcal and 3g protein, taking the bowl to ~580. A 200g pack of konjac adds 10–20 kcal and no protein, taking it to ~415.
+
+**Notes**
+
+Rebuilt from a saved app recipe around what is actually in the kitchen: a full-fat tin let down with water in place of light coconut milk, silken tofu, and pak choy and asparagus where the original had button mushrooms and tenderstem broccoli. The figures come off the tins rather than from estimates — 175 kcal per 100ml for the coconut milk, 59 kcal and 8.2g of protein per 100g for the silken tofu.
+
+The noodles are costed separately because they are the one part that changes the bowl completely, and because the choice is made per bowl rather than per pot. Everything above the noodle line is fixed; everything below is yours on the day.
+
+Half a tin, not a whole one. Coconut fat is where nearly all the calories sit, and a whole 400ml tin is 700 kcal, so using half and making the volume up with water keeps the broth generous while the bowl stays near 400. Diluting further does not help — water adds volume, not calories. The whole tin takes a bowl to roughly 575 before noodles, which is worth it only if you want it properly rich.
+
+Silken tofu is a better trade than it looks: 59 kcal per 100g against about 140 for firm, and 8.2g of protein against 16, so it costs less per gram of protein. It will not hold cubes in a simmering broth, which is why it goes in at the last minute and is not stirred. Firm tofu swaps in 1:1 if you want pieces with edges, and can go in two minutes earlier.
+
+Pak choy cutting depends on the size. Baby heads quarter lengthways straight down through the root, with only a thin slice off the base — the root is what holds each quarter together, and cutting too far up leaves loose leaves. A full-size head is really two vegetables: white stems cut away where they meet the green and sliced on a steep diagonal into 2cm pieces, leaves torn into wide ribbons. Wash it properly either way, since grit sits right down where the stems overlap and quartering is what opens that up to the tap. Cut it while the broth is building rather than ahead, because the edges brown.
+
+Baby corn is the original's vegetable and a good one here, especially as the only non-green thing in the bowl. 150g, halved lengthways, in two minutes before the prawns. Tinned is already cooked and wants only a minute, so hold it back and put it in with everything else. Tenderstem swaps straight back in for the asparagus, 1:1 by weight, same three minutes.
+
+Fine asparagus keeps cooking in the hot broth after the pan is off. Ladle up promptly or it turns olive and floppy. Pencil-thick spears can go in thirty seconds early.
+
+Konjac wants handling quite differently from rice noodles. Rinse properly under cold running water for a good minute, because the packing brine smells, then dry-fry in a hot non-stick pan with no oil for 3–4 minutes until they squeak and stop giving off water. That step is what takes the rubberiness out. Do not simmer them in the broth — they absorb nothing and the water they release thins it. Into the bowl, broth over.
+
+Not a thick curry — if it reduces too far it stops being the dish. Loosen with water rather than more coconut milk, which would sweeten it.
+
+Batch cooking: make the broth and nothing else. Steps 3 to 5 scale straight up and triple is comfortable in one large pan, but hold back the lime and half the fish sauce, because the broth concentrates every time it is reheated and the seasoning wants doing at the bowl. Curry paste does not scale quite linearly for heat either; go a little under at the large batch and correct once it is all in.
+
+Each serving is then a ladleful back to a simmer, 400ml or so, with the asparagus, pak choy stems and prawns in for 3 minutes and the tofu for the last one, exactly as written. There is nothing to gain by cooking the prawns into the batch, since reheated prawns go rubbery, and the greens turn olive overnight. Noodles never go near the stored broth — they keep drinking it and collapse. Lime and coriander at the bowl, always.
+
+Four days in the fridge. The broth freezes for 3 months without the noodles, prawns or tofu — freezing turns tofu spongy and honeycombed, and silken in particular does not survive it. Cool fully, freeze in portions, and do not refreeze once thawed. Coconut broth often looks grainy or split after thawing; bring it back gently, well under a boil, and it pulls together again.
+
+Scaled to four, as cooked: 600g prawns, 300g silken tofu, 200g asparagus, 300g pak choy, a whole 400ml tin let down to 600g of liquid, and double the paste, sugar and fish sauce. That lands on the same ~400 kcal and 40g of protein a portion, since the tin and tofu per head work out identical. The 600g of liquid is tighter than the ratio here, though, so it comes out concentrated rather than brothy — another 200–300g of water brings it back and costs nothing.
+
+## 32. Smashed Cucumber and Chilli Chicken Pasta Salad
+
+_Cold pasta salad with a cottage cheese and miso dressing, crispy chilli oil through it, and enough chicken to make it a proper meal._
+
+Serves 4 · Prep 5 min · Cook 10 min
+
+Tags: Mains, High protein
+
+**Ingredients**
+
+- 200g pasta — 50g dry a serving, see the notes
+- 500g cooked chicken breast, cut into 1cm chunks
+- 350g cucumber
+- 50g fresh coriander
+- 1 × 165g can sweetcorn, drained
+
+**For the dressing**
+
+- 250g full-fat cottage cheese
+- 100g 5% fat Greek yoghurt
+- 2 tbsp white miso
+- 2 tbsp crispy chilli oil
+- 1 lime
+- Salt
+
+**Method**
+
+1. **Cook and cool the pasta** — Boil in salted water to the packet time, then drain and rinse under cold water until genuinely cool. The rinse is what stops it going claggy as it sits.
+2. **Blend the dressing** — Cottage cheese, yoghurt and miso until completely smooth. Zest in half the lime, then season with salt and a squeeze of juice. Pour into a bowl and spoon the chilli oil over the top rather than stirring it in.
+3. **Smash the cucumber** — Hit it with a pan, rolling pin or pestle, then chop into 1–2cm chunks. Smashing gives torn edges that hold dressing where neat slices don't.
+4. **Chop the coriander** — Leaves roughly, saving a little to serve; stems thinly sliced and all going in.
+5. **Toss and serve** — Everything into a large bowl with the dressing. Divide between plates or boxes and finish with the reserved coriander.
+
+**Nutrition (approx.)**
+
+Base without pasta: ~390 kcal · 51g protein a serving.
+
+With 50g dried Kaizen protein pasta: ~500 kcal · 68g protein.
+
+With 50g dried normal macaroni: ~568 kcal · 57g protein.
+
+**Notes**
+
+Don't swap the chilli oil for olive oil to save calories — it doesn't. Two tablespoons of olive oil is 239 kcal against 156 for crispy chilli oil, because chilli oil is partly chilli and crispy bits rather than pure fat.
+
+The original uses 4 tbsp in the dressing plus another 4 tsp on top, which comes to 104 kcal a serving. Two tablespoons in total is plenty.
+
+A low-carb protein pasta is worth it here. For roughly the same calories as ordinary pasta it adds about 10g of protein and a great deal more fibre.
+
+Doesn't freeze — raw cucumber goes soggy and the yoghurt dressing splits. Fridge only, and it keeps 2–3 days.
+
+Adapted from a Chloe René recipe.
+
+## 33. Cabbage and Mince Pot
+
+_A big one-pot cabbage and lean mince dish._
+
+Serves 6 · 220 kcal a serving
+
+Tags: Mains, Low calorie, High protein
+
+**Ingredients**
+
+- 240 g white onions, chopped (about 6 small)
+- 10 ml sesame oil (or spray oil)
+- 500 g low-fat mince (5% fat)
+- 1 tsp garlic granules
+- 1 tsp smoked paprika
+- 1 tsp salt
+- 1 tbsp soup/stew seasoning
+- 1 tsp Cajun spice
+- 2 kg cabbage, chopped (about 2½ medium heads)
+
+**Method**
+
+1. Heat the oil in a very large pot or pressure cooker over medium heat. Fry the onions until soft and golden, about 7 minutes.
+2. Add the mince and cook, breaking it up, until browned, about 8 minutes.
+3. Stir in all the seasonings and cook for 1–2 minutes. Taste and adjust.
+4. Add the cabbage a big handful at a time. Cover, and add more as each batch wilts, until it all fits.
+5. Cook covered, stirring occasionally, until evenly tender, about 15 minutes.
+
+**Nutrition**
+
+Per serving: 220 kcal · 22 g protein · 24 g carbs · 6 g fat
+
+Per 100g: 48 kcal · 4.9 g protein · 5 g carbs · 1.3 g fat
+
+**Notes**
+
+- Seasoning amounts are a starting point, so adjust to your favourites.
+- Spray oil instead of sesame oil saves about 12 kcal per serving.
+- Cabbage releases plenty of water, so you usually don't need to add liquid.
+
+## 34. Roasted Tomato Soup
+
+_Roasting gives deep flavour without cream._
+
+Serves 4 · 95 kcal a serving
+
+Tags: Mains, Low calorie
+
+**Ingredients**
+
+- 1 kg ripe tomatoes, halved
+- 1 red pepper, chopped
+- 1 white onion, quartered
+- 4 garlic cloves, unpeeled
+- A few sprays of oil
+- 1 tsp smoked paprika
+- 1 tsp salt
+- 500 ml vegetable or chicken stock
+- Handful of fresh basil (or 1 tsp dried)
+- 4 tbsp 0% Greek yogurt, to serve
+
+**Method**
+
+1. Heat the oven to 200°C. Spread the tomatoes, pepper, onion and garlic on a tray. Spray with oil and sprinkle with paprika and salt.
+2. Roast until soft and slightly charred, about 35 minutes.
+3. Squeeze the garlic out of its skins. Put everything in a pot with the stock and simmer for 10 minutes.
+4. Add the basil and blend until smooth. Adjust the salt, and add water if it's too thick.
+5. Top each bowl with a spoon of yogurt.
+
+**Nutrition**
+
+Per serving: 95 kcal · 5 g protein · 18 g carbs · 1 g fat
+
+Per 100g: 21 kcal · 1.1 g protein · 4 g carbs · 0.3 g fat
+
+**Notes**
+
+- Without ripe tomatoes, use 2 tins of chopped tomatoes and skip roasting them. Still roast the pepper, onion and garlic.
+
+## 35. Spiced Butternut Squash Soup
+
+_Smooth, gently spiced and naturally creamy._
+
+Serves 4 · 165 kcal a serving
+
+Tags: Mains, Low calorie
+
+**Ingredients**
+
+- 1 kg butternut squash, peeled and cubed
+- 1 white onion, chopped
+- 2 carrots, chopped
+- 3 garlic cloves, crushed
+- A few sprays of oil
+- 1 tsp ground cumin
+- ½ tsp ground ginger (or 1 tbsp fresh)
+- Pinch of nutmeg
+- 900 ml vegetable or chicken stock
+- 1 tsp salt
+- 4 tbsp 0% Greek yogurt, to serve
+
+**Method**
+
+1. Spray a large pot with oil and soften the onion, carrots and garlic over medium heat for about 6 minutes. Add a splash of water if it sticks.
+2. Stir in the cumin, ginger and nutmeg for 1 minute.
+3. Add the squash, stock and salt. Cover and simmer until the squash is very soft, about 20 minutes.
+4. Blend until smooth, thinning with water if needed. Swirl yogurt on top to serve.
+
+**Nutrition**
+
+Per serving: 165 kcal · 5 g protein · 38 g carbs · 1 g fat
+
+Per 100g: 29 kcal · 0.9 g protein · 7 g carbs · 0.1 g fat
+
+**Notes**
+
+- For a sweeter, deeper flavour, roast the squash first at 200°C for about 30 minutes.
+- Pumpkin works in place of butternut.
+
+## 36. Middle Eastern Air Fryer Chicken
+
+_A lemon, garlic and baharat rub with no yoghurt in it. A short salt brine first is what keeps the breast juicy._
+
+Serves 4 · 209 kcal a serving
+
+Tags: Mains, Middle Eastern, Low calorie, High protein, Air fryer
+
+**Ingredients**
+
+- 600 g chicken breast, cut into 3 cm chunks
+- 1 tbsp salt, for the brine
+- 1 tbsp olive oil
+- 2 tbsp lemon juice
+- 3 garlic cloves, crushed
+- 2 tsp baharat or 7 spice
+- 1 tsp ground cumin
+- 1 tsp ground coriander
+- 1 tsp smoked paprika
+- ½ tsp turmeric
+- ¼ tsp cinnamon
+- ½ tsp salt, for the rub
+- Black pepper
+- Sumac and chopped parsley, to finish
+
+**Method**
+
+1. Dissolve the tablespoon of salt in 500 ml cold water and sit the chicken in it for 15 minutes. No longer, or it goes salty. Drain and pat dry.
+2. Mix the oil, lemon juice, garlic, spices, remaining salt and pepper into a loose paste. Add the chicken and turn until every piece is coated.
+3. Leave 30 minutes at room temperature, or up to 4 hours in the fridge. Longer than that and the lemon starts to make the texture chalky.
+4. Spread the pieces in a single layer in the basket and air fry at 200°C for 12–14 minutes, shaking at 7 minutes, until charred at the edges and 74°C in the middle.
+5. Rest for 3 minutes, then scatter with sumac and parsley.
+
+**Nutrition**
+
+Per serving: 209 kcal · 35 g protein · 2 g carbs · 5.6 g fat
+
+Per 100g: 181 kcal · 30 g protein · 1.7 g carbs · 4.8 g fat
+
+**Notes**
+
+- The brine is not optional with breast meat. Without yoghurt there's nothing holding moisture in, and 15 minutes in salted water is the difference between juicy and dry.
+- Keep the tablespoon of oil. It's 30 kcal a serving and it's what makes the spice stick and char rather than scorch and fall off. Spray oil alone brings it to about 179 kcal but the crust suffers.
+- Don't crowd the basket. Two smaller batches brown properly; one full one steams.
+- Whole breasts rather than chunks: 200°C for 16–18 minutes, turning once.
+- Thighs come to about 265 kcal a serving, need no brine, and are far more forgiving if you overshoot the time.
+- Good cold the next day — through the smashed cucumber pasta salad, or in a wrap with the Greek Yogurt Flatbread.
+
+## 37. Taco Salad with Quest Chips
+
+_Full-fat mince, drained hard, with Quest chips crushed over at the table. The draining is the whole trick._
+
+Serves 4 · Prep 15 min · Cook 10 min
+
+Tags: Mains, Low calorie, High protein
+
+**Ingredients**
+
+- 500 g full-fat beef mince
+- 300 g white cabbage, finely shredded
+- 1 batch pico de gallo
+- 100 g full-fat Greek yogurt
+- 40 g cheddar, grated
+- 2 × 32 g bags Quest tortilla style protein chips
+- 2 tbsp taco seasoning
+- Lime wedges, to serve
+
+**Method**
+
+1. Brown the mince hard in a dry pan, leaving it alone between stirs so it colours rather than steams.
+2. Drain it properly — tip the pan and spoon the fat off, or turn the lot into a sieve. This is the step that matters: it takes roughly 400 kcal off the batch, about a third.
+3. Back into the pan with the seasoning and a splash of water. Two minutes, until it clings to the meat.
+4. Cabbage into the bowls, mince over, then the pico, yogurt and cheese.
+5. Crush the chips over at the table, not before. They soften within minutes of touching anything wet.
+
+**Nutrition**
+
+Per serving: 380 kcal · 36 g protein · 20 g carbs · 17 g fat
+
+Per 100g: 121 kcal · 11.5 g protein
+
+**Notes**
+
+- Yogurt in place of sour cream. Full-fat Greek is 97 kcal per 100g against 190 for sour cream, and at this thickness you can't tell.
+- Cabbage rather than lettuce is deliberate. Dressed cabbage holds three days in a lunchbox; lettuce collapses overnight.
+- A Quest bag is 140 kcal and 20 g protein, so the chips carry about a quarter of the protein here. Two more bags takes it to roughly 450 kcal and 46 g protein.
+- Shop taco seasoning is mostly salt, with a little sugar. To mix your own: 2 tsp cumin, 2 tsp smoked paprika, 1 tsp chilli powder, 1 tsp oregano, 1 tsp garlic powder, 1 tsp salt.
+- 5% mince saves about 55 kcal a serving over full-fat once the full-fat is drained, and gives more protein. Full-fat drained tastes better, so it depends which you care about that day.
+
+# Breads
+
+## 38. Greek Yogurt Flatbread
+
+_Soft flatbreads with no yeast or oil, cooked in a dry pan in about 15 minutes._
+
+Makes 4 · 150 kcal each
+
+Tags: Breads
+
+**Ingredients**
+
+- 150 g self-raising flour, plus a little for dusting
+- 150 g 0% Greek yogurt
+- ¼ tsp salt
+- ½ tsp garlic granules or dried herbs (optional)
+
+**Method**
+
+1. Mix everything into a soft dough and knead briefly on a floured surface. Add a little flour if it's too sticky.
+2. Divide into 4 balls and roll each into a thin round, 3–4 mm thick.
+3. Heat a dry non-stick pan over medium-high heat. Cook each flatbread until puffed with golden spots, about 2 minutes per side.
+
+**Nutrition**
+
+Per flatbread: 150 kcal · 7 g protein · 29 g carbs · 0.5 g fat
+
+Per 100g: 210 kcal · 10 g protein · 41 g carbs · 0.7 g fat
+
+**Notes**
+
+- No self-raising flour? Use plain flour plus 1½ tsp baking powder.
+
+## 39. Cottage Cheese Flatbread
+
+_A flour-free, high-protein sheet you can use as a wrap or tear up for dipping in soup._
+
+Makes 4 pieces · 95 kcal each
+
+Tags: Breads, Low calorie, High protein
+
+**Ingredients**
+
+- 250 g low-fat cottage cheese
+- 2 large eggs
+- ¼ tsp salt
+- ½ tsp garlic granules
+- ½ tsp dried oregano or mixed herbs
+- 1 tbsp sesame seeds, for topping (optional)
+
+**Method**
+
+1. Heat the oven to 180°C and line a tray with baking paper.
+2. Blend the cottage cheese, eggs, salt, garlic and herbs until completely smooth and runny.
+3. Pour onto the tray and spread into a thin, even rectangle, 3–4 mm thick. Sprinkle with sesame if using.
+4. Bake until golden all over and firm, with no wet patches in the middle, 30–40 minutes. Start checking at 30.
+5. Let it cool on the tray for 10 minutes, then peel it off the paper and cut into 4.
+
+**Nutrition**
+
+Per piece: 95 kcal · 11 g protein · 2.5 g carbs · 4 g fat
+
+Per 100g: 150 kcal · 18 g protein · 4 g carbs · 6.4 g fat
+
+**Notes**
+
+- Baking paper is essential, because it sticks to bare trays and foil.
+- Blend really smooth, because lumps leave holes in the sheet.
+- The sesame topping adds about 13 kcal per piece.
+- Keeps 3–4 days in the fridge with paper between the pieces. Crisp it up in a dry pan before eating.
+
+## 40. Protein Tostada Shells
+
+_Crisp tostada shells built on gluten flour, so the base carries real protein instead of just carbs._
+
+Makes 4 · 74 kcal each
+
+Tags: Breads, Low calorie, High protein, Air fryer
+
+**Ingredients**
+
+- 60 g vital wheat gluten
+- 15 g oat flour or plain (all-purpose) flour
+- ½ tsp baking powder
+- ½ tsp ground cumin
+- Pinch of salt
+- 70–80 ml warm water
+
+**Method**
+
+1. Mix the dry ingredients, then add the water a little at a time. Stop as soon as it comes together — gluten dough goes from dry to sticky very fast, and a sticky one won't roll thin.
+2. Knead for 2 minutes, then cover and rest for 10. The rest is what lets it roll out without springing back.
+3. Divide into 4 and roll each very thin between two sheets of parchment.
+4. Dry-fry 30 seconds a side in a hot pan to set them.
+5. Air fry at 190°C for about 5 minutes, until they snap rather than bend.
+
+**Nutrition**
+
+Per shell: 74 kcal · 12 g protein · 5.5 g carbs · 0.5 g fat
+
+Per 100g: 330 kcal · 53 g protein · 24 g carbs · 2.2 g fat
+
+Nothing is added during cooking, so if you spray oil, count that on top — a light spray is 5–10 kcal.
+
+**Notes**
+
+- Vital wheat gluten is sold as gluten flour or seitan flour, usually in the baking aisle rather than with the specialist flours. A 567 g bag is about 38 shells.
+- The 15 g of flour is only there to dilute the gluten. Pure gluten goes rubbery like seitan, and a little low-gluten flour is what lets it snap. Oat and plain flour both work; plain gives a slightly crisper shell, oat a faintly nubbly one with more fibre.
+- No gluten flour? Chickpea flour (besan) makes a thin batter crepe that crisps the same way, at about 75 kcal and 4 g protein a shell. Not low carb, but always available here.
+- For 8 shells: 120 g gluten, 30 g flour, 1 tsp each baking powder and cumin, ½ tsp salt, 140–160 ml water.
+- Raw dough keeps 2–3 days wrapped in the fridge, or freezes as flat discs between parchment for a couple of months. Cooked but still soft, 4–5 days in the fridge.
+- Crisped shells keep 4–5 days airtight at room temperature, not in the fridge, because fridge humidity turns them leathery. Let them cool completely before the lid goes on or they steam themselves soft. Two minutes at 180°C revives them.
+- A shop-bought fried tostada is 130–150 kcal with about 2 g protein.
+
+## 41. Protein Loaf
+
+_Mostly vital wheat gluten, so it's chewy and dense rather than fluffy, and far better toasted than fresh._
+
+Makes 12 slices · Prep 20 min · Rise 1½ hrs · Bake 35–40 min
+
+Tags: Breads, Low calorie, High protein
+
+**Ingredients**
+
+- 200 g vital wheat gluten
+- 60 g oat flour or plain flour
+- 30 g ground flaxseed
+- 7 g instant yeast (1 sachet)
+- 1 tsp salt
+- 1 tsp sugar
+- 1 tbsp olive oil
+- 300 ml warm water
+
+**Method**
+
+1. Mix the gluten, flour, flaxseed, yeast, salt and sugar in a bowl.
+2. Add the warm water and oil and bring it together into a stiff dough.
+3. Knead hard for 8–10 minutes, or 5 minutes in a mixer with a dough hook. This is the one dough where you want maximum gluten development — the opposite of the banana bread.
+4. Cover and rise 1 hour somewhere warm. Expect about half the rise you would get from a normal loaf.
+5. Shape and drop into a lined 2 lb loaf tin. Rise another 30–40 minutes.
+6. Bake at 180°C for 35–40 minutes, until it sounds hollow underneath and reads 95°C inside.
+7. Cool completely on a rack before slicing. Cutting it warm drags the crumb.
+
+**Nutrition**
+
+Per slice: 112 kcal · 14 g protein · 7.5 g carbs · 2.8 g fat
+
+Per 100g: 250 kcal · 31 g protein · 17 g carbs · 6 g fat
+
+**Notes**
+
+- The crumb is chewy and dense, closer to a bagel than a soft white loaf. That is inherent to a dough that is mostly gluten, not a fault in the method.
+- Noticeably better toasted than fresh.
+- The sugar is there to feed the yeast and is gone by the time it bakes, so it doesn't count against you.
+- Slice the whole loaf once cool and freeze it with paper between the slices. It toasts straight from frozen.
+- A 567 g bag of vital wheat gluten is just under three loaves.
+- Keeps 3 days wrapped at room temperature. Don't refrigerate it — bread stales faster in the fridge than on the counter.
+
+# Snacks
+
+## 42. Red Cabbage with Vinegar
+
+_Three ingredients and a pan. The vinegar isn't optional — without acid the cabbage turns blue-grey instead of staying purple._
+
+Makes 2 portions · 50 kcal a portion
+
+Tags: Snacks, Low calorie
+
+**Ingredients**
+
+- 300 g red cabbage, core out, shredded thin
+- 1½ tbsp red wine or apple cider vinegar
+- ¼ tsp salt
+- 3 tbsp water
+
+**Method**
+
+1. All four into the smallest pan it fits in. Spread thin across a wide pan it dries out before it softens.
+2. Lid on, lowest heat, 20–30 minutes, stirring once or twice. Twenty-five minutes leaves some bite; forty-five takes it properly soft.
+3. Adjust the salt and vinegar at the end, not the start.
+
+**Nutrition**
+
+Per portion (~140 g): 50 kcal · 2 g protein · 11 g carbs · 0.2 g fat
+
+Per 100g: 35 kcal · 1.4 g protein · 7.4 g carbs · 0.1 g fat
+
+**Notes**
+
+- Red cabbage is a pH indicator. Acid holds it purple, alkaline tap water turns it blue-grey. That is the whole reason the vinegar goes in at the start rather than being stirred through at the end.
+- Stainless or non-stick, never cast iron or aluminium. Both react and dull the colour.
+- No sugar and no apple on purpose. Sweet-sour braised cabbage is the German version; this stays sharp, which sits better beside plain chicken and rice.
+- Best cold, straight from the fridge, which is where a batch earns itself. Keeps a week and is better on day two. Freezes 3 months.
+- For a week's worth, triple it: 1 kg cabbage, 4 tbsp vinegar, 1 tsp salt, 100 ml water, 45–60 minutes. Or everything into a covered casserole at 160°C for an hour and a half with one stir, which needs no attention at all.
+
+## 43. Corn on the Cob, Oven or Air Fryer
+
+_Fresh corn, no pot of boiling water. It goes sweeter and nuttier in dry heat than it ever does boiled._
+
+Serves 4 · Prep 5 min · Cook 15–30 min
+
+Tags: Snacks, Low calorie, Air fryer
+
+**Ingredients**
+
+- 4 fresh corn cobs, husks and silk removed
+- A few sprays of oil, or 1 tsp olive oil
+- ½ tsp salt
+- ½ tsp chilli powder or smoked paprika
+- 1 lime or lemon, cut into wedges
+- Sumac, to finish (optional)
+
+**Method**
+
+1. Strip the husks and silk and dry the cobs. Wet corn steams instead of browning.
+2. Leave them whole, or cut each into 3–4 cobettes if you want them snackable.
+3. Rub lightly with oil and season with the salt and chilli.
+4. **Air fryer** — 200°C for 12–16 minutes, turning twice, until tender and charred in patches.
+5. **Oven** — 200°C fan for 25–30 minutes, turning once. Wrapped in foil they steam soft in the same time; unwrapped they colour and concentrate.
+6. Squeeze the lime over while hot and scatter with sumac.
+
+**Nutrition (approx.)**
+
+Per serving (1 cob): ~83 kcal · 3g protein · 17g carbs · 1.3g fat
+
+Per 100g kernels: ~92 kcal · 3.3g protein · 19g carbs · 1.4g fat
+
+**Notes**
+
+- Loose kernels make a better snack to pick at: 400g drained tinned or thawed frozen corn, dried well, 200°C for 10–12 minutes, shaking twice, until browned at the edges and chewy-crisp. Same calories.
+- Butter is where corn gets expensive. A teaspoon per cob is 34 kcal, a 40% increase on the cob itself. Lime, chilli and salt get you most of the way for nothing.
+- Fresh cobs for the whole-cob version — tinned or frozen kernels have already been cooked and will just dry out on a cob.
+- Cut kernels off any leftovers straight into the Kidney Bean and Corn Salad.
+
+## 44. Egg White and Vegetable Frittata Muffins
+
+_Little baked egg cups packed with spinach and capsicum — very low calorie, good hot or cold._
+
+Makes 12 (serves 6) · Prep 15 min · Bake 20–22 min
+
+Tags: Snacks, Low calorie, High protein
+
+**Ingredients**
+
+- 400ml egg whites (or 8 whole eggs — see notes)
+- 2 whole eggs
+- 100g spinach, chopped
+- 1 red capsicum, finely diced
+- ½ white onion, finely chopped
+- 60g feta, crumbled
+- Salt and black pepper
+- Oil spray, for the tin
+
+**Method**
+
+1. **Soften the vegetables** — Onion and capsicum in a dry or lightly sprayed pan 4–5 minutes, then the spinach just until it wilts. Cool slightly.
+2. **Fill the tin** — Divide between 12 lined or well-sprayed muffin cups.
+3. **Pour and top** — Beat the eggs with salt and pepper, pour over to ¾ full, crumble the feta on top.
+4. **Bake** — 180°C for 20–22 minutes, until puffed and just set. They sink a little as they cool; that's normal.
+
+**Nutrition (approx.)**
+
+Per 100g: ~70 kcal · 8g protein.
+
+Per serving (2 muffins): ~95 kcal · 11g protein.
+
+**Notes**
+
+All whole eggs instead of whites: use 8, giving ~107 kcal and 8g protein per two muffins.
+
+Diced tomato works in place of some capsicum — squeeze the wet seeds out first or the bottoms go soggy. Feta is optional.
+
+Keep 4 days in the fridge or freeze 2 months; reheat from frozen in the air fryer at 160°C for 5 minutes.
+
+## 45. Whipped Cottage Cheese Dip
+
+_Cottage cheese blended until it looks like labneh — thick, savoury, high in protein for very little._
+
+Serves 4 · Prep 5 min
+
+Tags: Snacks, Dips, Low calorie, High protein
+
+**Ingredients**
+
+- 400g low-fat cottage cheese
+- 1 garlic clove
+- Juice of ½ lemon
+- 1 tbsp olive oil
+- A handful of herbs — dill, mint, or parsley
+- Salt and black pepper
+- To serve: cucumber, carrot, and capsicum sticks
+
+**Method**
+
+1. **Blend** — Cottage cheese with garlic, lemon, oil, and seasoning, 1–2 minutes, scraping down once, until completely smooth and glossy. Stop too early and it stays grainy.
+2. **Fold in herbs** — Pulse briefly, or stir by hand to keep it pale with green flecks.
+3. **Serve** — Into a bowl, swirl with the back of a spoon, a final drizzle of oil, vegetable sticks alongside.
+
+**Nutrition (approx.)**
+
+Per 100g: ~93 kcal · 11g protein.
+
+Per serving: ~105 kcal · 12g protein. Vegetable sticks add 20–30 kcal.
+
+**Notes**
+
+Keeps 3 days. Also good as a sandwich spread, a topping for the frittata muffins, or thinned into a dressing.
+
+## 46. High-Protein Berry Waffles
+
+_Cottage cheese and Greek yogurt waffles with vanilla protein, flaxseed, and jammy pockets of blueberries._
+
+Makes 1 deep waffle, cut into 4 quarters · Prep 15 min · Cook 5–7 min
+
+Tags: Snacks, Breakfast, High protein
+
+**Ingredients**
+
+- 40g whole grain rolled oats (or Bob's Red Mill 8 Grain Hot Cereal)
+- 100g low-fat cottage cheese
+- 100g Greek yogurt (0–2% fat)
+- 2 large eggs
+- 40g vanilla protein powder
+- 15g milled flaxseed (or chia)
+- 1 tsp baking powder
+- Pinch of salt
+- 50g frozen blueberries
+
+**Method**
+
+1. **Grind the oats** — In the dry food processor bowl, to a rough flour, about 30 seconds. Tip out.
+2. **Blend the wet base** — Cottage cheese, yogurt, eggs, 30–60 seconds, scraping down once, until completely smooth.
+3. **Combine** — Add ground oats, protein powder, flaxseed, baking powder, salt. Pulse just until combined. Rest 10 minutes so it thickens; thick but pourable.
+4. **Fold in the berries** — Toss the frozen blueberries with a teaspoon of protein powder and fold in by hand, straight from frozen. Pulsing them streaks the batter purple.
+5. **Cook** — The whole batch into the deep waffle iron at ~180°C, 5–7 minutes until deep golden and set. Don't open the iron early. Cut into 4 quarters.
+
+**Batch and freeze**
+
+Doubles or triples easily — cook the whole lot, as the batter doesn't keep. Cool completely on a rack so the quarters don't steam soggy, freeze flat, then bag. 2–3 months; reheat from frozen in a toaster or air fryer at 180°C for 3–4 minutes, crisper than day one. Fridge 3 days.
+
+**Nutrition (approx.)**
+
+Per 100g: ~155 kcal · 16g protein.
+
+Per quarter: ~175 kcal · 18g protein — or ~155 kcal using 1 egg + 2 whites. Whole waffle: ~695 kcal · 74g protein.
+
+**Notes**
+
+Bob's Red Mill 8 Grain Hot Cereal swaps 1:1 with nearly identical nutrition — it's cracked grain, so grind it well and give the batter its full rest.
+
+Steel-cut oats work the same way; whole oat groats are too hard for this batter.
+
+## 47. Choc-Peanut Protein Bars
+
+_No-bake bars of dates, peanut butter, and cocoa with a dark chocolate drizzle._
+
+Makes 16 bars (~50g each) · Prep 15 min · Chill 2 hrs
+
+Tags: Snacks, High protein
+
+**Ingredients**
+
+- 150g medjool dates, chopped
+- 100g crunchy peanut butter
+- 150g plant protein powder, unflavoured
+- 100g rolled oats
+- 30g chia seeds, milled
+- 20g cocoa powder
+- 200ml water
+- 60g dark chocolate (80%), to drizzle
+
+**Method**
+
+1. **Make the base** — Blitz the dates with the water to a paste, then mix in the peanut butter and cocoa.
+2. **Form the dough** — Work in the protein powder, oats, and chia until stiff — a splash more water if crumbly.
+3. **Press and drizzle** — Press firmly into a lined 20×20cm tin. Melt the chocolate in short bursts and drizzle over.
+4. **Chill and cut** — 2 hours, then into 16 bars.
+
+**Nutrition (approx.)**
+
+Per 100g: ~310 kcal · 22g protein.
+
+Per 50g bar: ~155 kcal · 11g protein. Whole batch: ~2,490 kcal.
+
+**Notes**
+
+Keeps 1 week in the fridge or 2 months frozen.
+
+---
+
+## 48. Garlic Bread from a Day-Old Baguette
+
+_Stale-ish bread is the point — dry crumb drinks the butter instead of going squashy. Accordion cuts so it pulls apart at the table._
+
+Serves 6 · Prep 10 min · Cook 15 min
+
+Tags: Snacks
+
+**Ingredients**
+
+- 1 day-old baguette (~250g)
+- 100g butter, softened
+- 3–4 garlic cloves, crushed — or 4 frozen garlic cubes
+- 2 tbsp flat-leaf parsley, finely chopped
+- ½ tsp salt
+- 2 tbsp grated parmesan, optional
+
+**Method**
+
+1. **Garlic butter** — Beat the crushed garlic, parsley and salt into the soft butter. With frozen cubes, melt the butter in a small pan instead and cook the cubes in it for a minute until they stop sizzling, then let it cool to brushable.
+2. **Cut** — Angled cuts every 2cm down the length, stopping before the base crust so the loaf stays in one piece.
+3. **Fill** — Push or brush the butter into every slit, right down. Parmesan over the top if using.
+4. **Bake** — Wrapped in foil, 190°C for 12 minutes, then open the foil for a final 3–4 minutes to crisp the crust.
+
+**Nutrition (approx.)**
+
+Per 100g: ~395 kcal · 7g protein. Per serving (~60g): ~235 kcal.
+
+**Notes**
+
+One clove per 25–30g butter is the ratio. Three is comfortable, four is properly garlicky, five turns harsh and raw-tasting.
+
+Frozen garlic carries water, which splits soft butter and makes it greasy. Cooking it in melted butter first fixes that, and it is the only reason to change the method.
+
+Fresh bread makes worse garlic bread than day-old. If the baguette has gone properly hard rather than just dry, it wants soaking instead — pappa al pomodoro, or torn into #13.
+
+Assembled unbaked, it freezes in foil for a month. Straight from frozen at 190°C, 20 minutes wrapped, 5 open.
+
+---
+
+## 49. Kids' Granola Bars
+
+_Oats, honey and chocolate, pressed hard and baked. The egg is what makes them bars rather than loose granola._
+
+Makes 12 · Prep 15 min · Cook 25 min (plus 2½ hr cooling)
+
+Tags: Snacks
+
+**Ingredients**
+
+- 250g rolled oats
+- 70g cashews, chopped small
+- 15g black chia seeds
+- ½ tsp salt
+- 120g honey
+- 40g butter
+- 1 egg, beaten
+- 60g chocolate chips
+
+**Method**
+
+1. **Toast** — Oats and cashews spread on a tray, 160°C for 10–12 minutes, until they smell nutty. Into a large bowl with the chia and salt.
+2. **Syrup** — Honey and butter simmered together 2–3 minutes, until it bubbles steadily and thickens slightly. Poured over the dry and mixed fast.
+3. **Cool, then egg** — Five minutes off the heat before the beaten egg goes in. Any hotter and it scrambles.
+4. **Chocolate** — Half the chips stirred through.
+5. **Press** — Into a lined 20cm tin, pressed much harder than feels reasonable with the base of a measuring cup. The rest of the chips scattered over and pressed in.
+6. **Bake** — 25 minutes at 160°C.
+7. **Cool completely** — Two hours at room temperature, then thirty minutes in the fridge, then cut in single firm downward pushes.
+
+**Nutrition (approx.)**
+
+Per bar (1/12): ~202 kcal · 4.8g protein. Cut into 16 instead and they are ~152 kcal each.
+
+**Notes**
+
+The press is the whole recipe. Almost every batch that crumbles failed at that step rather than in the ingredients, and it is very hard to overdo.
+
+Cutting them warm gives rubble. They need to be properly cold.
+
+The egg is the upgrade over a honey-only bar — it sets in the oven and holds everything together, which is why the honey and butter can come down to 120g and 40g. Leave the egg out and they want more of both.
+
+Chia earns its place by absorbing the syrup as it cools. It is doing structural work, not decoration.
+
+Stir the chocolate into a hot mix and it smears brown through everything. If the kitchen is warm, freeze the chips for ten minutes first.
+
+A muffin tray works and saves the cutting: paper cases, pressed down with the back of a teaspoon, 18–20 minutes. Let them cool completely in the tray before lifting any out. Pressing the mix up the sides gives a cup that holds a spoon of yogurt.
+
+Five days in an airtight tin, 3 months frozen, wrapped individually. They thaw in a lunchbox by break time. Cool them completely before any lid goes on or trapped steam makes them soggy.
+
+---
+
+## 50. Cranberry Walnut Breakfast Bars
+
+_Chewier and less sweet than the chocolate ones. More breakfast than snack._
+
+Makes 12 · Prep 20 min · Cook 25 min (plus 2½ hr cooling)
+
+Tags: Snacks, Breakfast
+
+**Ingredients**
+
+- 200g rolled oats
+- 50g 8-grain hot cereal
+- 30g All-Bran, crushed
+- 70g walnuts, chopped
+- 25g flax meal
+- 70g dried cranberries
+- 30g pistachios, chopped, for the top
+- 1 tsp cinnamon
+- ½ tsp salt
+- 120g honey
+- 40g butter
+- 1 egg, beaten
+
+**Method**
+
+1. **Soak the cranberries** — Ten minutes in hot water or orange juice, then drained well.
+2. **Toast** — Oats, 8-grain and walnuts at 160°C for 8–10 minutes. Less than the chocolate bars want. The All-Bran and flax meal stay off the tray.
+3. **Mix** — Everything dry into a bowl with the cinnamon, salt and drained cranberries.
+4. **Syrup** — Honey and butter simmered 2–3 minutes, poured over, mixed fast. Cool five minutes, then the beaten egg.
+5. **Press and top** — Into a lined 20cm tin, pressed hard. Pistachios scattered over and pressed in.
+6. **Bake** — 25 minutes at 160°C, or 18–20 in a paper-cased muffin tray.
+7. **Cool completely** before cutting.
+
+**Nutrition (approx.)**
+
+Per bar (1/12): ~227 kcal · 5.4g protein.
+
+**Notes**
+
+Soaking the cranberries first is the difference between chewy and tooth-breaking. Dried fruit dries further in the oven.
+
+Walnuts turn bitter if you push the toast, and they are the point of this one, so take them out earlier than feels right.
+
+The pistachios stay green and look good against the dark bar, which is the only reason they go on top rather than through.
+
+The All-Bran is the one to drop if the kids notice it. Thirty grams is right at the edge of where it tastes worthy.
+
+Walnuts carry a lot of oil and go rancid faster than cashews, so freeze these if they are not eaten inside a week. Otherwise the same keeping as #42.
+
+## 51. Air Fryer Crispy Chickpeas
+
+_A crunchy, savoury snack from one tin of chickpeas._
+
+Serves 4 · 80 kcal a serving
+
+Tags: Snacks, Low calorie, Air fryer
+
+**Ingredients**
+
+- 1 tin chickpeas (400 g, about 240 g drained)
+- A few sprays of oil
+- 1 tsp smoked paprika
+- ½ tsp garlic granules
+- ½ tsp ground cumin
+- ½ tsp salt
+
+**Method**
+
+1. Drain and rinse the chickpeas. Pat them very dry with a towel and remove any loose skins.
+2. Air fry plain at 200°C for 12–15 minutes, shaking the basket halfway.
+3. Spray with oil, toss with the spices and salt, and air fry for another 3–5 minutes until crunchy.
+4. Let them cool for a few minutes, as they crisp up more as they cool.
+
+**Nutrition**
+
+Per serving (about 40 g): 80 kcal · 4 g protein · 11 g carbs · 2 g fat
+
+Per 100g: 185 kcal · 10 g protein · 26 g carbs · 4.4 g fat
+
+**Notes**
+
+- Drying them well is the key to crunch. Wet chickpeas steam instead of crisping.
+- They're best eaten the same day. Store leftovers in an open container, because a sealed one makes them soft.
+- For a sweet version, swap the spices for cinnamon and stevia.
+
+## 52. Air Fryer Zucchini Chips
+
+_Thin, crispy zucchini rounds with a light parmesan coating._
+
+Serves 2 · 85 kcal a serving
+
+Tags: Snacks, Low calorie, Air fryer
+
+**Ingredients**
+
+- 2 medium zucchini (about 400 g)
+- ½ tsp salt
+- A few sprays of oil
+- ½ tsp garlic granules
+- ½ tsp smoked paprika
+- Black pepper
+- 20 g parmesan, finely grated
+
+**Method**
+
+1. Slice the zucchini into 3–4 mm rounds. Sprinkle with the salt and leave for 10 minutes, then pat dry to draw out moisture.
+2. Spray with oil and toss with the garlic, paprika and pepper.
+3. Arrange in a single layer in the air fryer, working in batches. Cook at 190°C for 10–12 minutes, flipping halfway.
+4. Sprinkle with parmesan for the last 2–3 minutes, until golden and crisp.
+
+**Nutrition**
+
+Per serving: 85 kcal · 6 g protein · 7 g carbs · 4 g fat
+
+Per 100g: 115 kcal · 8 g protein · 9 g carbs · 5.7 g fat
+
+**Notes**
+
+- Without the parmesan, they're about 40 kcal per serving.
+- They soften as they sit, so eat them straight away.
+- Eggplant works the same way. Slice it thinly and cook it a few minutes longer.
+
+## 53. Rice Paper Chicken Dumplings
+
+_Crispy air-fried parcels with a lean chicken and vegetable filling._
+
+Makes 8 · 70 kcal each
+
+Tags: Snacks, Low calorie, Air fryer
+
+**Ingredients**
+
+- 8 rice paper sheets
+- 200 g lean chicken mince
+- 100 g cabbage, finely shredded
+- 1 carrot, grated
+- 2 spring onions, finely chopped
+- 1 garlic clove, crushed
+- 1 tsp fresh ginger, grated
+- 1 tbsp light soy sauce
+- 1 tsp sesame oil
+- A few sprays of oil
+
+**Method**
+
+1. Mix the chicken, cabbage, carrot, spring onions, garlic, ginger, soy sauce and sesame oil.
+2. Dip one rice paper sheet in warm water for 2–3 seconds and lay it on a damp board.
+3. Put an eighth of the filling in the centre, fold in the sides and roll into a square parcel. Repeat, keeping the finished parcels apart so they don't stick together.
+4. Spray with oil and air fry at 200°C for 10–12 minutes, flipping halfway, until golden and the chicken is cooked through.
+
+**Nutrition**
+
+Per dumpling: 70 kcal · 6 g protein · 8.5 g carbs · 1.3 g fat
+
+Per 100g: 125 kcal · 11 g protein · 15 g carbs · 2.3 g fat
+
+**Notes**
+
+- Four of these make a filling snack or light meal at about 280 kcal and 25 g protein.
+- Serve with a dip of light soy sauce, rice vinegar and chilli flakes, which adds almost no calories.
+- Lean beef mince or chopped prawns work in place of chicken.
+
+## 54. Fresh Veggie Rice Paper Rolls
+
+_Crunchy, no-cook rolls packed with raw vegetables and herbs, with a light dipping sauce._
+
+Makes 8 · 40 kcal each
+
+Tags: Snacks, Low calorie
+
+**For the rolls**
+
+- 8 rice paper sheets
+- 1 carrot, cut into thin matchsticks
+- ½ cucumber, cut into thin matchsticks
+- ½ red pepper, thinly sliced
+- 50 g red cabbage, finely shredded
+- A few lettuce leaves
+- Handful of fresh mint and coriander
+
+**For the dipping sauce**
+
+- 2 tbsp light soy sauce
+- 1 tbsp rice vinegar
+- Juice of ½ lime
+- Pinch of chilli flakes
+- Stevia to taste
+
+**Method**
+
+1. Prepare all the vegetables and herbs before you start, because the rice paper softens quickly.
+2. Dip one rice paper sheet in warm water for 2–3 seconds and lay it on a damp board.
+3. Place a lettuce leaf on the lower third, then add some of each vegetable and a few herbs.
+4. Fold the bottom over the filling, fold in the sides, and roll up tightly. Repeat with the rest.
+5. Mix the sauce ingredients and serve alongside.
+
+**Nutrition**
+
+Per roll, with sauce: 40 kcal · 0.8 g protein · 9 g carbs · 0.1 g fat
+
+Per 100g: 60 kcal · 1.1 g protein · 13.5 g carbs · 0.2 g fat
+
+**Notes**
+
+- For more protein, add 100 g firm tofu cut into strips. That adds about 15 kcal and 1.5 g protein per roll.
+- They're best eaten fresh. To store for a few hours, cover them with a damp towel in the fridge and keep them apart so they don't stick.
+- Skip peanut dipping sauces, which can add 100 kcal or more per serving.
+
+## 55. Rice Paper Crisps
+
+_Light, airy crisps that puff up in about a minute, a good swap for crisps or prawn crackers._
+
+Serves 2 · 60 kcal a serving
+
+Tags: Snacks, Low calorie, Air fryer
+
+**Ingredients**
+
+- 4 rice paper sheets
+- A few sprays of oil
+- ½ tsp seasoning of choice (smoked paprika, garlic granules, chilli flakes or sea salt)
+
+**Method**
+
+1. Cut the dry rice paper sheets into chip-sized pieces with scissors.
+2. Spray lightly with oil and sprinkle with the seasoning.
+3. Air fry in a single layer at 200°C for 1–3 minutes, until puffed and white. Watch closely, because they go from puffed to burnt quickly.
+
+**Nutrition**
+
+Per serving: 60 kcal · 0.3 g protein · 13.5 g carbs · 0.6 g fat
+
+Per 100g: 365 kcal · 2 g protein · 79 g carbs · 3.5 g fat
+
+**Notes**
+
+- They weigh almost nothing, so a big bowl is only about 30 g. That's why the per-100g figure looks high while a serving is only about 60 kcal.
+- No air fryer? Microwave the pieces for 20–30 seconds instead.
+
+## 56. Kale Chips
+
+_Crispy, salty kale that scratches the crisps itch for about 30 kcal a serving._
+
+Serves 2 · 30 kcal a serving
+
+Tags: Snacks, Low calorie, Air fryer
+
+**Ingredients**
+
+- 100 g kale, stems removed
+- A few sprays of oil
+- ¼ tsp salt
+- ½ tsp garlic granules or smoked paprika
+
+**Method**
+
+1. Tear the kale into bite-sized pieces, wash it, and dry it thoroughly. A salad spinner helps.
+2. Spray with oil and massage in the salt and seasoning.
+3. Air fry at 160°C for 5–7 minutes, shaking halfway, until crisp. Or bake at 150°C for 15–20 minutes.
+
+**Nutrition**
+
+Per serving: 30 kcal · 1.5 g protein · 4 g carbs · 1 g fat
+
+Per 100g: 170 kcal · 8.6 g protein · 23 g carbs · 5.7 g fat
+
+**Notes**
+
+- Keep the temperature low, because kale burns fast at high heat.
+- Any damp leaves steam instead of crisping, so dry them well.
+
+## 57. Air Fryer Sweet Potato, Cubes or Fries
+
+_The soak and the cornflour are what make the difference. Sweet potato has more sugar and less starch than a normal potato, so it burns before it crisps unless you help it._
+
+Serves 4 · 134 kcal a serving
+
+Tags: Snacks, Low calorie, Air fryer
+
+**Ingredients**
+
+- 600 g sweet potato, scrubbed, skin on
+- 2 tsp cornflour
+- A few sprays of oil
+- 1 tsp smoked paprika
+- ½ tsp garlic granules
+- ½ tsp salt
+- Black pepper
+
+**Method**
+
+1. Cut into 2 cm cubes, or 1 cm batons for fries. Keep them even — mixed sizes means some burnt and some raw.
+2. Soak in cold water for 20–30 minutes to wash off the surface starch, then drain and dry them thoroughly in a towel. Any water left on them steams instead of crisping.
+3. Toss with the cornflour until lightly dusted, then with the oil, paprika, garlic and salt.
+4. Air fry at 190°C in a single layer. Cubes take 15–18 minutes with two shakes; fries take 16–20 and want checking from 14.
+5. Salt again straight out of the basket, while they're still hot enough for it to stick.
+
+**Nutrition**
+
+Per serving (150 g raw): 134 kcal · 2.4 g protein · 30 g carbs · 0.7 g fat
+
+Per 100g cooked: 112 kcal · 2 g protein · 25 g carbs · 0.6 g fat
+
+**Notes**
+
+- 190°C, not 200°C. The sugar in sweet potato catches and goes bitter at the temperature you'd use for normal chips.
+- The cornflour is 2 kcal a serving and does more for the crust than anything else here.
+- Skin on. It crisps well, holds the batons together and saves peeling.
+- A tablespoon of olive oil instead of the spray takes it to about 164 kcal a serving. Better colour, still under 200.
+- Cubes are the more forgiving cut. Fries are thinner, so the window between crisp and leathery is short.
+- They soften within about 10 minutes of coming out. There is no fix for this — eat them straight away.
+
+## 58. Pico de Gallo
+
+_Cherry tomatoes rather than the big pale ones, and an onion base you make once a week so each batch takes two minutes._
+
+Makes ~400g · Prep 10 min · 24 kcal per 100g
+
+Tags: Snacks, Dips, Low calorie
+
+**For the onion base (enough for 4 batches)**
+
+- 240 g white onion, finely diced
+- 80 g jalapeño, finely diced
+- 8 tbsp lime juice
+- 2 tsp salt
+
+**For each batch**
+
+- 300 g cherry tomatoes, quartered
+- 100 g onion base (a quarter of the jar)
+- 20 g fresh coriander, chopped
+
+**Method**
+
+1. For the base, stir the onion, jalapeño, lime and salt together and pack it into a jar with the onion submerged. It keeps a week in the fridge and is better from day two, once the acid has taken the raw bite out of the onion.
+2. Quarter the cherry tomatoes. Don't deseed them — there isn't enough flesh on a cherry tomato to make it worth the loss, and you'd end up with mush.
+3. Stir a quarter of the base through the tomatoes with the fresh coriander.
+4. Taste for salt and rest 10 minutes before serving.
+
+**Nutrition**
+
+Per 100g: 24 kcal · 1 g protein · 5 g carbs · 0.2 g fat
+
+Whole batch (~400 g): 96 kcal
+
+**Notes**
+
+- Tomatoes never go in the jar. They are what breaks down and floods the bowl, so they get cut fresh each time.
+- Coriander goes in per batch too, because it wilts to nothing in acid within a few hours.
+- Cherry tomatoes are the better buy here — the large ones go pale and watery in this climate while cherry stay sweet. Roma or plum are ideal if you find good ones: meaty walls, little seed gel, and they dice cleanly. Deseed those.
+- Avoid beef tomatoes. Too much water and too little flavour.
+- Let the tomatoes sit out 20 minutes if they have been in the fridge. Cold tomato tastes of almost nothing.
+- A made-up batch holds a day. By day two it is watery — drain it and use it as the base for Sahawig, or cook it down into a salsa for eggs.
+
+## 59. Avocado Yogurt Dip
+
+_Blended rather than mashed, so the two emulsify into something silkier than guacamole at a third of the calories._
+
+Makes ~330g · Prep 5 min · 112 kcal per 100g
+
+Tags: Snacks, Dips, Low calorie
+
+**Ingredients**
+
+- 100 g avocado (about half a medium one)
+- 200 g full-fat Greek yogurt
+- 1 garlic clove
+- 2 tbsp lime juice
+- 20 g fresh coriander
+- ½ tsp ground cumin
+- Salt and chilli, to taste
+
+**Method**
+
+1. Everything except the salt into a food processor.
+2. Run 30–40 seconds, scraping down once halfway, until completely smooth.
+3. Salt at the end, then taste for lime and chilli.
+
+**Nutrition**
+
+Per 100g: 112 kcal · 5.3 g protein · 4 g carbs · 8 g fat
+
+Per spoonful (~50 g): 56 kcal · 2.7 g protein
+
+**Notes**
+
+- Blend, don't mash. Mashed you get yogurt with lumps of avocado through it; blended the two emulsify and it tastes far richer than it is.
+- A food processor beats a jug blender here. 330 g is too small and too thick for a jug, which just pushes it up the sides above the blades. A stick blender in a tall narrow jug works too.
+- The lime is structural, not only flavour. It is what keeps the dip green.
+- Press cling film onto the surface rather than just lidding the tub and it holds two days. It browns on top regardless — stir it back in.
+- Salt at the end. Early salt draws water out of the yogurt and thins the whole thing.
+- 0% Greek yogurt takes it to 89 kcal and 6.8 g protein per 100g, but it loses the silkiness.
+- Does duty as sour cream on the Taco Salad, with Quest chips, or beside the Middle Eastern Air Fryer Chicken.
+
+# Desserts
+
+## 60. Creami Pineapple Sorbet
+
+_Canned pineapple spun into something between a sorbet and a piña colada — no dairy needed._
+
+Makes 1 pint (serves 2) · Prep 5 min · Freeze 24 hrs
+
+Tags: Desserts, Low calorie, High protein
+
+**Ingredients**
+
+- 1 tin pineapple slices in light syrup (~400g), drained
+- 100ml of the syrup from the tin
+- 1 scoop (30g) vanilla whey protein
+- Squeeze of lime (optional, but it sharpens the pineapple)
+- Pinch of salt
+- Optional: 2 tbsp Greek yogurt, for a creamier finish
+
+**Method**
+
+1. **Blend** — Everything until completely smooth.
+2. **Freeze** — Into the Creami pint, no higher than the max line, flat, for 24 hours.
+3. **Spin** — Sorbet setting if your machine has one, otherwise Ice Cream.
+4. **Re-spin** — It will almost certainly come out crumbly first time — add 1 tbsp syrup or water and Re-spin until smooth.
+
+**Nutrition (approx.)**
+
+Per 100g: ~70 kcal · 5g protein.
+
+Per serving (½ pint): ~130 kcal · 11g protein. With yogurt, ~145 kcal.
+
+**Notes**
+
+Fruit-only bases freeze harder than dairy ones, so expect to Re-spin at least once. That's normal, not a mistake.
+
+Canned pineapple is heat-treated, so unlike fresh it won't stop gelatine setting or turn meat mushy in a marinade.
+
+Piña colada version: swap 50ml of the syrup for coconut milk, adding about 40 kcal a serving.
+
+## 61. Protein Mousse Cups
+
+_Greek yogurt whipped with vanilla whey and cocoa, set in the fridge._
+
+Serves 2 · Prep 5 min · Chill 30 min
+
+Tags: Desserts, High protein
+
+**Ingredients**
+
+- 300g Greek yogurt (0–2% fat)
+- 1 scoop (30g) vanilla whey protein
+- 10g cocoa powder
+- A splash of milk (about 2 tbsp)
+- Sweetener to taste, if needed
+
+**Method**
+
+1. **Mix** — Whisk the powder and cocoa into the yogurt with just enough milk to loosen it. Add the milk slowly or it turns runny.
+2. **Whip** — Hard, about 30 seconds, until it thickens and lightens in colour.
+3. **Chill** — Divide between two cups, 30 minutes to set.
+
+**Nutrition (approx.)**
+
+Per 100g: ~90 kcal · 14g protein.
+
+Per cup: ~165 kcal · 26g protein.
+
+**Notes**
+
+Top with berries, chopped nuts, or a scrape of peanut butter.
+
+Made with Kevin Levrone Gold Whey vanilla: 30g scoop = 114 kcal, 21g protein, 1.3g fat, 4.2g carbs.
+
+## 62. Creami Date and Cardamom Ice Cream
+
+_A Gulf-flavoured protein ice cream sweetened only by dates._
+
+Makes 1 pint (serves 2) · Prep 5 min · Freeze 24 hrs
+
+Tags: Desserts, High protein
+
+**Ingredients**
+
+- 250ml milk (skim or light)
+- 1 scoop (30g) vanilla whey protein
+- 3 medjool dates, pitted
+- ½ tsp ground cardamom
+- Pinch of salt
+
+**Method**
+
+1. **Blend** — Until completely smooth. The dates must break down fully or they freeze into hard specks.
+2. **Freeze** — Into the Creami pint, flat, 24 hours.
+3. **Spin** — Ice Cream setting.
+4. **Re-spin** — Protein bases almost always come out crumbly first time — add 1 tbsp milk and Re-spin, repeating once more if needed.
+
+**Nutrition (approx.)**
+
+Per 100g: ~105 kcal · 9g protein.
+
+Per serving (½ pint): ~185 kcal · 15g protein.
+
+**Notes**
+
+A flat freezer surface matters — a tilted pint spins unevenly and comes out lumpy.
+
+The same base works with coffee instead of cardamom, or a spoon of cocoa for chocolate.
+
+## 63. Japanese Banana Chiffon Cake
+
+_No butter, barely any flour — the lift comes almost entirely from a meringue folded through a banana batter._
+
+17cm chiffon tin (serves 6) · Prep 20 min · Bake 40 min
+
+Tags: Desserts
+
+**Ingredients**
+
+- 150g very ripe banana, peeled
+- 40ml milk
+- 4 large eggs, separated
+- 60g sugar, divided into 40g and 20g
+- 50ml vegetable oil
+- 70g plain flour
+- ½ tsp baking powder
+- Optional: ½–1 tsp vanilla extract, into the yolk batter
+
+**Method**
+
+1. **Banana juice** — Blend the banana with the milk until completely smooth.
+2. **Yolk batter** — Whisk the yolks with the 20g of sugar until pale, then the oil and banana mixture. Sift in the flour and baking powder and mix smooth.
+3. **Meringue** — Whip the whites, adding the 40g of sugar gradually, to soft peaks. Drop to low and keep going briefly until smooth and fine-textured rather than bubbly.
+4. **Fold** — One ladleful of meringue into the yolk batter to loosen, then pour that back into the meringue and fold gently until just combined.
+5. **Bake** — Pour in from about 10cm up, shake gently to release air pockets. 170°C for 20 minutes, then 160°C for a further 20.
+6. **Cool upside down** — Invert immediately over a bottle and leave until completely cold — at least 1½ to 2 hours — then release with a knife.
+
+**Nutrition (approx.)**
+
+Per 100g: ~265 kcal · 6.5g protein.
+
+Per slice (⅙): ~225 kcal · 5.5g protein.
+
+**Notes**
+
+A chiffon tin is a tall, straight-sided aluminium tin with a hollow tube up the middle. The tube is what you hang it on to cool, and it helps the centre cook through.
+
+Three things make or break a chiffon: never grease the tin (the batter must grip the sides to climb), aluminium rather than nonstick, and always cool upside down or it collapses under its own weight.
+
+No chiffon tin? A loose-bottom round tin works. Cool it by resting the inverted tin's rim on three or four mugs so the cake hangs clear, keep a hand on the loose base as you turn it, and add 5–10 minutes to the second bake.
+
+Doubling: an 8-egg batch needs a 21–23cm tin, filled no more than two-thirds. Keep 170°C for 20 minutes, then 30–35 at 160°C. Fold the meringue in three additions.
+
+Riper bananas are better — brown-speckled ones give sweetness and flavour.
+
+## 64. Pineapple Upside-Down Cake
+
+_Tinned pineapple caramelised in butter and brown sugar under a soft sponge, turned out golden side up._
+
+Two 16cm round tins (makes 2 cakes, serves 8) · Prep 20 min · Bake 25–30 min
+
+Tags: Desserts
+
+**For the topping**
+
+- 1 tin pineapple slices in light syrup (~400g), drained — keep 3 tbsp of the syrup
+- 40g butter (20g per tin)
+- 60g soft brown sugar (30g per tin)
+- Glacé cherries, to sit in the pineapple holes (optional)
+
+**For the sponge**
+
+- 150g butter, softened
+- 150g caster sugar
+- 3 eggs
+- 150g self-raising flour (or plain with 1½ tsp baking powder)
+- 3 tbsp of the reserved pineapple syrup
+- 1 tsp vanilla extract
+- Pinch of salt
+
+**Method**
+
+1. **Prepare the tins** — Oven to 180°C. Line the base of each 16cm tin with baking paper and grease the sides. Loose base? Wrap the outside in foil — the caramel seeps.
+2. **Caramel base** — Melt the 40g butter, stir in the brown sugar, divide between the tins, about 2 tbsp each. Pat the pineapple completely dry and lay 3 or 4 slices in each, cherries in the holes if using.
+3. **Sponge** — Beat the softened butter and caster sugar pale and fluffy, 3–4 minutes. Eggs one at a time, beating well. Fold in flour and salt, then vanilla and the reserved syrup.
+4. **Bake** — Divide between the tins, levelling gently so the slices don't shift. Both on the same shelf, 25–30 minutes, until risen, golden, and a skewer comes out clean. Start checking at 25.
+5. **Turn out** — Rest 5 minutes only, then knife round the edge and invert while hot. Wait longer and the caramel sets and glues them in. Leave the tin over each for a minute so the caramel drips down.
+
+**Nutrition (approx.)**
+
+Per 100g: ~330 kcal · 4g protein.
+
+Per cake: ~1,560 kcal, cut into 4 slices of ~390 kcal each. A proper occasion cake — butter and sugar are the structure.
+
+**Notes**
+
+Drying the pineapple matters most. Wet slices water down the caramel and leave a soggy layer.
+
+Turn out hot. This is the step people get wrong.
+
+The reserved syrup in the batter is what makes it taste of pineapple throughout rather than only on top.
+
+One 20cm tin instead: same quantities, bake 35–40 minutes. Two 16cm tins hold slightly more between them, so the cakes are shallower, with more caramel per mouthful.
+
+For deeper cakes in the two tins, scale up by a quarter: 190g butter, 190g caster sugar, 4 eggs, 190g self-raising flour, 4 tbsp syrup — and bake 32–35 minutes. Fill no more than two-thirds of a 5cm tin.
+
+Best on the day, slightly warm, with yogurt or cream. Keeps 2 days covered. One to eat, one to freeze — wrapped whole it keeps a month.
+
+## 65. Bahraini Crème Caramel
+
+_The Gulf version — gaimar, Dream Whip, and cream cheese blended into the custard for a rich, firm set, with the caramel sauce left out._
+
+Serves 12 · Prep 10 min · Cook 5 min · Chill 4 hrs
+
+Tags: Desserts, Bahraini
+
+**Ingredients**
+
+- 1 can gaimar (~170g)
+- 1 sachet Dream Whip
+- 100g cream cheese
+- 500ml milk
+- 2 crème caramel sachets — powder only, caramel sauce left out
+
+**Method**
+
+1. **Blend** — Gaimar, Dream Whip, cream cheese, and milk until completely smooth, about a minute. The cream cheese must break up fully or it leaves white flecks.
+2. **Add the powder** — Blend briefly again, just to combine.
+3. **Cook** — Into a saucepan over medium heat, whisking constantly and scraping the base, until it comes to a full boil and visibly thickens — 3–5 minutes. Boil a few seconds, then straight off the heat.
+4. **Set** — Into 12 small cups (about 80g each) or one large mould. Cool at room temperature until the steam stops, then cover and chill at least 4 hours, ideally overnight.
+5. **Turn out** — Dip the mould briefly in hot water and invert onto a plate.
+
+**Nutrition (approx.)**
+
+Per 100g: ~185 kcal · 3g protein.
+
+Per portion (1/12, ~80g): ~150 kcal · 2.5g protein. Whole batch: ~1,800 kcal.
+
+**Notes**
+
+Two sachets to 500ml of milk — rather than the 500ml per sachet on the packet — gives the firm, sliceable set that turns out cleanly.
+
+Without the caramel sauce it comes out pale ivory, tasting of cream and vanilla rather than burnt sugar.
+
+Keep whisking the whole time it heats: the starch catches the moment you stop.
+
+## 66. Blueberry and Raspberry Sour Cream Cake
+
+_A rich, dense butter cake shot through with pink and purple berries — moist for days thanks to the sour cream._
+
+20cm square tin (serves 12) · Prep 20 min · Bake 55–65 min
+
+Tags: Desserts
+
+**Ingredients**
+
+- 400g white sugar (2 cups)
+- 227g butter (1 cup), softened
+- 2 large eggs
+- 240g sour cream (1 cup)
+- 1 tsp vanilla extract
+- 203g plain flour (1⅝ cups)
+- 1 tsp baking powder
+- ¼ tsp salt
+- 150g blueberries (1 cup), fresh or frozen
+- 125g raspberries (1 cup), fresh or frozen
+
+**Method**
+
+1. **Prepare** — Oven to 180°C. Line the base of the tin and grease the sides.
+2. **Cream** — Beat the butter and sugar 4–5 minutes until pale and fluffy. With this much sugar it looks sandy and unpromising for the first couple of minutes; keep going until it lightens.
+3. **Eggs** — One at a time, beating well after each.
+4. **Sour cream** — Beat in the sour cream and vanilla until smooth.
+5. **Dry** — Whisk the flour, baking powder, and salt together, holding back 1 tbsp. Fold in just until no streaks remain — stop there, or the crumb toughens.
+6. **Berries** — Toss both lots of berries with the reserved tablespoon of flour. Fold the blueberries in first, then the raspberries with two or three strokes only — they are far more fragile and will streak the batter pink if you keep going. Straight from frozen if frozen.
+7. **Bake** — 55–65 minutes, until golden and a skewer comes out clean. The extra fruit adds water, so it needs longer than it looks. Tent with foil if the top colours before the middle sets.
+8. **Cool** — 20 minutes in the tin, then onto a rack.
+
+**Nutrition (approx.)**
+
+Per 100g: ~355 kcal · 3.2g protein · 18g fat · 45g carbs.
+
+Per slice (1/12, ~110g): ~395 kcal · 3.6g protein.
+
+**Notes**
+
+Sour cream is what makes it — the acid tenderises the crumb and keeps it moist for days. Full-fat Greek yogurt substitutes 1:1, slightly drier.
+
+Don't thaw either berry first; they collapse and bleed through the batter.
+
+Frozen raspberries actually hold up better than fresh here — fresh ones are so soft they break apart as you fold.
+
+275g of fruit in a batter this size is a lot, so the crumb around the berries stays damp and the cake is more fragile to slice. Let it cool completely if you want clean squares.
+
+Twice as much sugar as flour is what gives it the dense, moist, almost fudgy crumb rather than a light sponge.
+
+Keeps 3 days covered, freezes 2 months whole or in slices.
+
+An occasion cake — at ~395 a slice it doesn't fit a 1,200 day, and isn't trying to.
+
+## 67. Raspberry Yogurt Bake
+
+_A custardy baked yogurt pot studded with raspberries._
+
+Serves 1 · 140 kcal a pot
+
+Tags: Desserts, Low calorie, High protein
+
+**Ingredients**
+
+- 150 g 0% Greek yogurt
+- 1 egg white
+- 1 tsp cornflour
+- Stevia to taste
+- A few drops of vanilla extract
+- 50 g raspberries (fresh or frozen)
+
+**Method**
+
+1. Heat the oven to 180°C.
+2. Whisk the yogurt, egg white, cornflour, stevia and vanilla until smooth.
+3. Pour into a small ramekin and press the raspberries into the top.
+4. Bake until set at the edges with a slight wobble in the middle, 20–25 minutes.
+5. Eat warm, or chill for a cheesecake-like texture.
+
+**Nutrition**
+
+Per pot: 140 kcal · 19 g protein · 15 g carbs · 0.7 g fat
+
+Per 100g: 65 kcal · 9 g protein · 7 g carbs · 0.3 g fat
+
+**Notes**
+
+- A whole egg instead of the white gives a richer custard and adds about 55 kcal and 5 g fat.
+- Strawberries work in place of raspberries.
+
+## 68. Chocolate Protein Mug Cake
+
+_A 90-second chocolate cake with a peanut butter drizzle._
+
+Serves 1 · 225 kcal a mug
+
+Tags: Desserts, High protein
+
+**Ingredients**
+
+- 1 scoop vanilla protein powder (about 30 g)
+- 1 tbsp unsweetened cocoa powder
+- ½ tsp baking powder
+- Stevia to taste
+- 1 egg white
+- 60 ml skimmed milk
+- 10 g peanut butter, thinned with 1 tsp warm water, for drizzling
+
+**Method**
+
+1. Mix the protein powder, cocoa, baking powder and stevia in a large mug.
+2. Whisk in the egg white and milk until smooth, with no dry lumps.
+3. Microwave for 60 seconds, then in 15-second bursts until just set on top, about 90 seconds in total.
+4. Drizzle with the thinned peanut butter.
+
+**Nutrition**
+
+Per mug: 225 kcal · 32 g protein · 9 g carbs · 7 g fat
+
+Per 100g: 180 kcal · 26 g protein · 7 g carbs · 5.6 g fat
+
+**Notes**
+
+- Don't overcook it, because protein mug cakes turn rubbery quickly. Slightly underdone is best.
+- Without the peanut butter drizzle, it's about 165 kcal, 30 g protein and 2 g fat.
+
+## 69. Baked Protein Cheesecake with Strawberry Topping
+
+_A creamy crustless cheesecake lightened with Greek yogurt and protein powder._
+
+Serves 8 · 145 kcal a slice
+
+Tags: Desserts, Low calorie, High protein
+
+**For the filling**
+
+- 280 g light cream cheese, at room temperature
+- 400 g 0% Greek yogurt
+- 2 large eggs
+- 2 scoops vanilla protein powder (about 60 g)
+- 2 tbsp cornflour
+- Stevia to taste (about the sweetness of 80 g sugar)
+- 1 tsp vanilla extract
+- Zest of ½ lemon (optional)
+
+**For the topping**
+
+- 200 g frozen strawberries
+- Stevia to taste
+
+**Method**
+
+1. Heat the oven to 160°C. Line a 20 cm round dish or tin with baking paper.
+2. Beat the cream cheese until smooth. Add the yogurt, eggs, protein powder, cornflour, stevia, vanilla and lemon zest, and mix until just smooth. Don't overbeat, because extra air makes it crack.
+3. Pour into the dish and bake for 40–45 minutes, until the edges are set and the centre still wobbles slightly.
+4. Turn off the oven and leave the cheesecake inside with the door ajar for 30 minutes.
+5. Cool, then chill for at least 4 hours or overnight.
+6. For the topping, simmer the strawberries with stevia for 8–10 minutes, mashing lightly, until jammy. Cool, then spoon over the cheesecake before serving.
+
+**Nutrition**
+
+Per slice: 145 kcal · 15 g protein · 8 g carbs · 5.6 g fat
+
+Per 100g: 118 kcal · 12 g protein · 6.5 g carbs · 4.6 g fat
+
+**Notes**
+
+- Protein powder firms up quickly, so take it out while the centre still wobbles. It sets fully in the fridge.
+- Baking in a tray of hot water (a water bath) gives the smoothest, crack-free top.
+
+## 70. Crustless Pumpkin Pie
+
+_All the filling and none of the pastry, which is where a pumpkin pie's calories actually live._
+
+Serves 8 · 94 kcal a slice
+
+Tags: Desserts, Low calorie, High protein
+
+**Ingredients**
+
+- 425 g pumpkin purée (one tin — purée, not pie filling, which is pre-sweetened)
+- 3 eggs
+- 2 egg whites
+- 200 g evaporated skimmed milk
+- 100 g 0% Greek yogurt
+- 30 g vanilla protein powder
+- Stevia to taste (about the sweetness of 120 g sugar)
+- 2 tsp cinnamon
+- 1 tsp ground ginger
+- ½ tsp nutmeg
+- ¼ tsp ground cloves
+- ½ tsp salt
+
+**Method**
+
+1. Heat the oven to 175°C and grease a 23 cm dish.
+2. Whisk the pumpkin, evaporated milk, yogurt, protein powder, stevia, spices and salt until smooth. The powder goes into the cold liquid first, or it clumps.
+3. Taste now and adjust the sweetness. Once the eggs are in you can't taste it safely.
+4. Whisk in the eggs and egg whites for 20–30 seconds, just until no streaks remain. Beating air in leaves a foamy, pitted surface.
+5. Pour into the dish and bake for 42–55 minutes.
+6. Take it out when the outer two-thirds is set and the middle still wobbles. A crack across the top means it has gone too far and will weep.
+7. Chill at least 4 hours, ideally overnight. It firms up a lot as it cools, and it is meant to be eaten cold.
+
+**Nutrition**
+
+Per slice: 94 kcal · 10.3 g protein · 8 g carbs · 2.3 g fat
+
+Per 100g: 81 kcal · 8.8 g protein · 6.9 g carbs · 1.9 g fat
+
+**Notes**
+
+- Without sugar's bulk the custard sets a little faster than a conventional one, so start checking at 42 minutes rather than 45.
+- Keep the protein powder to 30 g. More than that and a baked custard turns rubbery. Collagen peptides behave better than whey here if you have them, and leaving it out altogether gives about 78 kcal and 7 g protein a slice.
+- Vanilla protein powder is already sweetened and already flavoured, so skip any vanilla extract and start at two-thirds of the stevia.
+- Stevia works but turns bitter in quantity. The cinnamon, ginger and nutmeg mask it better than almost anything else would, and a pinch more salt knocks back any bitterness that does come through.
+- If your evaporated milk tin is smaller, top the difference up with ordinary milk or more yogurt.
+- Keeps 4 days in the fridge. It freezes, but a sugar-free custard weeps on thawing, so portion it first and pour off any water.
+- Doubling it into one deeper dish does not work — the edges overcook before the centre sets. Bake two dishes, or use a paper-cased muffin tray for 12 portions at 20–25 minutes.
+
+## 71. Protein Marshmallow Slice
+
+_A gelatine-set marshmallow base under a cocoa glaze, with no sugar and no baking._
+
+Serves 4 · 69 kcal a portion
+
+Tags: Desserts, Low calorie, High protein
+
+**For the base**
+
+- 5 egg whites, pasteurised (from a carton)
+- 15 g beef gelatine
+- 70 ml water
+- Sweetener to taste (about the sweetness of 25 g sugar)
+
+**For the glaze**
+
+- 100 ml full-fat milk, heated
+- 3 tbsp cocoa powder
+- Sweetener to taste (about the sweetness of 8 g sugar)
+- 1 tbsp vanilla protein powder
+- Coconut flakes, to finish
+
+**Method**
+
+1. Sprinkle the gelatine over the water — not the other way round, or it clumps — and leave 10 minutes. Melt it gently without letting it boil, because boiling destroys its setting power.
+2. Beat the egg whites with the sweetener to a firm foam.
+3. Pour the cooled but still liquid gelatine in gradually, mixing as you go. Work fast, because it starts setting the moment it cools.
+4. Scrape into a lined 15 cm square tin and level the top.
+5. For the glaze, whisk the hot milk with the cocoa, sweetener and protein powder. Let it cool a few minutes, then pour over the base.
+6. Scatter the coconut flakes and chill 1½ hours.
+
+**Nutrition**
+
+Per portion: 69 kcal · 11.2 g protein · 3.9 g carbs · 1.7 g fat
+
+Per 100g: 74 kcal · 12 g protein · 4.2 g carbs · 1.8 g fat
+
+The coconut flakes are not included in these figures. They are around 700 kcal per 100g, so a light scattering adds roughly 9 kcal a portion and a handful adds a great deal more.
+
+**Notes**
+
+- A 15 cm square tin gives a slice about 4 cm deep. A 1 lb loaf tin works too, just taller and narrower.
+- Pasteurised carton egg whites are the safe choice, because nothing here cooks them and the gelatine sets them without heat.
+- Using fresh eggs instead: whisk the whites and sweetener in a bowl over barely simmering water until they reach 71°C, keeping the whisk moving, then take them off and whip to firm peaks before folding the gelatine in. That pasteurises them and the texture comes out the same. Without that step, don't serve it to children.
+- You cannot bake it to cook the eggs. Gelatine melts at about 35°C, so any oven heat undoes the set.
+- Gelatine too hot cooks the whites into threads; too cool and it sets before it is mixed in. Barely warm is the target. If lumps won't dissolve, warm it gently and sieve it before it goes near the whites.
+- Chocolate protein powder works in place of vanilla, in which case drop the cocoa back to 2½ tbsp.
+- Full-fat milk adds about 7 kcal a portion over skimmed and makes a noticeably better glaze.
+- The sweetener does no structural work here — the gelatine does all of it — so any sweetener works and you can pick purely on taste.
+- Translated and adapted from a Romanian recipe. The original claims about 50 kcal a portion, which holds for the base alone.
+
+## 72. Blueberry Protein Ninja Creami Ice Cream
+
+_A light, creamy blueberry ice cream with added protein._
+
+Makes 1 pint · 255 kcal a pint
+
+Tags: Desserts, High protein
+
+**Ingredients**
+
+- 50 g frozen blueberries
+- Stevia to taste (be generous)
+- 300 ml skimmed milk
+- 1 scoop vanilla protein powder (about 30 g)
+- ¼ tsp guar gum
+- 30 ml unsweetened almond milk, for the re-spin
+
+**Method**
+
+1. Microwave the blueberries until thawed and juicy, about 1 minute. Stir in plenty of stevia.
+2. Blend or whisk the milk, protein powder and guar gum until smooth, sprinkling the guar gum in slowly so it doesn't clump. Stir in the blueberries.
+3. Pour into a Creami pint, staying below the max fill line. Freeze overnight with the lid on.
+4. Run the outside of the pint under hot water for 1 minute to loosen the edges.
+5. Spin on **Lite Ice Cream**.
+6. Add the almond milk and **Re-spin**.
+
+**Nutrition**
+
+Per pint: 255 kcal · 34 g protein · 25 g carbs · 2.3 g fat
+
+Per 100g: 62 kcal · 8.3 g protein · 6.1 g carbs · 0.6 g fat
+
+**Notes**
+
+- Freezing dulls sweetness, so the base should taste sweeter than you want the ice cream to be.
+- Guar gum is what makes it creamy, and a quarter teaspoon is enough.
+- Protein powder can make it a bit crumbly after the first spin. The re-spin fixes it, and you can add another splash of almond milk if needed.
+- Without the protein powder, it's about 140 kcal and 11 g protein per pint.
+- Any frozen fruit works in place of blueberries.
+
+## 73. Strawberry Jelly Glasses
+
+_A soft-set fruit jelly served in glasses and topped with Greek yogurt._
+
+Serves 4 · 45 kcal a glass
+
+Tags: Desserts, Low calorie
+
+**Ingredients**
+
+- 300 g strawberries (fresh or frozen), plus a few for topping
+- 2 tbsp lemon juice
+- 200 ml water
+- 1½ tbsp powdered gelatin (about 14 g)
+- Stevia to taste
+- 4 tbsp 0% Greek yogurt, to top
+
+**Method**
+
+1. Blend the strawberries, lemon juice and 100 ml of the water until smooth.
+2. Sprinkle the gelatin over the remaining 100 ml of cold water and leave for 5 minutes to soften.
+3. Warm the gelatin gently, in a small pan or in the microwave for 20–30 seconds, until fully dissolved. Don't let it boil.
+4. Whisk the gelatin into the strawberry mix with stevia to taste.
+5. Pour into 4 glasses and chill until set, about 3 hours.
+6. Top each glass with a spoon of yogurt and a sliced strawberry.
+
+**Nutrition**
+
+Per glass: 45 kcal · 5 g protein · 7 g carbs · 0.3 g fat
+
+Per 100g: 30 kcal · 3.4 g protein · 4.6 g carbs · 0.2 g fat
+
+**Notes**
+
+- For a layered look, set half the jelly for 1 hour, add a layer of yogurt, then pour the rest on top.
+- Raspberries, blueberries or orange juice all work. Fresh pineapple, kiwi, papaya, mango and guava can stop gelatin from setting, so use tinned versions of those.
+
+## 74. Banana Chia Pudding
+
+_Made with full-fat milk rather than a low-calorie milk, and split into three small pots instead of two big ones._
+
+Makes 3 pots · 123 kcal a pot
+
+Tags: Desserts, Low calorie
+
+**Ingredients**
+
+- 24 g chia seeds
+- 250 ml full-fat milk
+- ½ ripe banana (about 60 g), mashed well
+- 10 g vanilla protein powder
+- ½ tsp cinnamon
+- Pinch of salt
+- Sweetener to taste
+
+**Method**
+
+1. Mash the banana to a purée — any lumps stay lumps, they don't break down overnight.
+2. Whisk everything together in a jug.
+3. Leave 10 minutes, then whisk again hard. This second whisk is the important one: chia sinks and sets as a solid lump at the bottom if it's only stirred once.
+4. Pour into 3 small glasses and refrigerate at least 4 hours, ideally overnight.
+
+**Nutrition**
+
+Per pot: 123 kcal · 6.7 g protein · 12.3 g carbs · 5.7 g fat
+
+Per 100g: 107 kcal · 5.8 g protein · 10.7 g carbs · 4.9 g fat
+
+**Notes**
+
+- Nearly all the calories are the chia and the milk, not the fruit. Chia is 486 kcal per 100g, so the 24 g here is already 117 kcal before anything else goes in. Adding more chia to thicken it is expensive; leaving it longer in the fridge is free.
+- Unsweetened almond milk instead of full-fat drops it to about 80 kcal a pot, but costs 8 g of protein across the batch and tastes thinner. Full-fat is the better pot.
+- One Medjool date, soaked and blended, works in place of the banana at 66 kcal against 53. It needs blending properly or you get chewy bits.
+- Keeps 4 days in the fridge, so the batch covers most of the week.
+- It thickens as it sits. If it sets harder than you like, loosen it with a splash of milk and stir.
+
+## 75. Banana Bread
+
+_No butter, no oil and no sweetener — four very ripe bananas do all of it. More of a breakfast loaf than a cake, which is the point._
+
+Makes 10 slices · 123 kcal a slice
+
+Tags: Desserts, Low calorie
+
+**Ingredients**
+
+- 4 very ripe bananas (about 400 g peeled)
+- 150 g plain flour
+- 2 eggs
+- 100 g 0% Greek yogurt
+- 30 g vanilla protein powder
+- 1 tsp baking powder
+- ½ tsp bicarbonate of soda
+- 1½ tsp cinnamon
+- ½ tsp salt
+
+**Method**
+
+1. Heat the oven to 180°C and line a 2 lb loaf tin.
+2. Mash the bananas properly, to a purée rather than lumps. They are the sugar, the moisture and the fat replacement all at once, so the browner and softer they are the better the loaf.
+3. Whisk in the eggs and yogurt.
+4. Add the flour, protein powder, baking powder, bicarbonate, cinnamon and salt. Fold until just combined and stop — overmixing is what turns a fat-free cake rubbery.
+5. Into the tin and bake 50–60 minutes, checking at 50. A skewer should come out with a crumb or two, not wet batter.
+6. Cool 10 minutes in the tin, then turn out and wrap while still slightly warm.
+
+**Nutrition**
+
+Per slice: 123 kcal · 6.3 g protein · 21 g carbs · 1.4 g fat
+
+Per 100g: 181 kcal · 9.3 g protein · 31 g carbs · 2.1 g fat
+
+**Notes**
+
+- A shop or café slice of banana bread is around 320 kcal. Almost the whole difference is the 100 g of butter and 150 g of sugar that aren't in this one.
+- No added sweetener at all. With four bananas it is mildly sweet rather than cake-sweet, and tastes like something you'd eat at breakfast.
+- Without fat it stales fast. Wrap it while slightly warm and eat it within two days, or slice and freeze it.
+- Two tablespoons of oil would improve the crumb noticeably for 24 kcal a slice. Worth it if you aren't counting hard.
+- Don't use vital wheat gluten here. This is a quick bread and wants as little gluten as possible — gluten flour would make it tough and chewy.
+- For more protein without hurting the crumb: swap one egg for two whites, or take the yogurt up to 150 g. More protein powder is the wrong lever; past 30 g it goes rubbery.
+- Chocolate chips add about 20 kcal a slice, walnuts about 26. Both stay under 150.
 </script>
 <script>
 var MD=document.getElementById('book').textContent;
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function inl(s){return esc(s).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/_(.+?)_/g,'<em>$1</em>');}
-var TAGS={Breakfasts:'Breakfast',Mains:'Main',Snacks:'Snack',Sweets:'Sweet'};
+var TAGS={Breakfast:'Breakfast',Mains:'Main',Breads:'Bread',Snacks:'Snack',Desserts:'Dessert'};
 var lines=MD.split('\n'),section=null,recipes=[],cur=null,block=null;
 function push(){if(cur&&block&&(block.items.length||block.paras.length))cur.blocks.push(block);block=null;}
 for(var i=0;i<lines.length;i++){
  var L=lines[i],m;
- if(m=L.match(/^# (Breakfasts|Mains|Snacks|Sweets)\s*$/)){push();section=m[1];continue;}
- if(m=L.match(/^## (\d+)\.\s+(.+)$/)){push();cur={n:+m[1],title:m[2].trim(),section:section,blurb:'',meta:'',blocks:[],tags:[],serves:null};recipes.push(cur);continue;}
+ if(m=L.match(/^# (Breakfast|Mains|Breads|Snacks|Desserts)\s*$/)){push();section=m[1];continue;}
+ if(m=L.match(/^## (\d+)\.\s+(.+)$/)){push();cur={n:+m[1],title:m[2].trim(),section:section,blurb:'',meta:'',tags:[],blocks:[]};recipes.push(cur);continue;}
  if(/^## /.test(L)){push();cur=null;continue;}
  if(!cur)continue;
- if(m=L.match(/^Tags:\s*(.+)$/i)){cur.tags=m[1].split(',').map(function(s){return s.trim().toLowerCase();}).filter(Boolean);continue;}
  if(/^---\s*$/.test(L)){push();continue;}
  if((m=L.match(/^_(.+)_$/))&&!cur.blurb){cur.blurb=m[1];continue;}
- if(!cur.meta&&L.indexOf('·')!==-1&&!/^\s*[-*]\s/.test(L)&&!/^\s*\d+\.\s/.test(L)&&L.trim()){cur.meta=L.trim();var _sv=cur.meta.match(/(?:serves|makes)\s+(\d+)/i);if(_sv)cur.serves=+_sv[1];continue;}
+ if(!cur.meta&&L.indexOf('·')!==-1&&!/^\s*[-*]\s/.test(L)&&!/^\s*\d+\.\s/.test(L)&&L.trim()){cur.meta=L.trim();continue;}
+ if(m=L.match(/^Tags:\s*(.+)$/)){cur.tags=m[1].split(',').map(function(t){return t.trim();}).filter(Boolean);continue;}
  if(m=L.match(/^\*\*(.+?)\*\*\s*$/)){push();block={title:m[1],items:[],paras:[]};continue;}
  if(m=L.match(/^- (.+)$/)){if(!block)block={title:'',items:[],paras:[]};block.items.push({t:'li',v:m[1]});continue;}
  if(m=L.match(/^\d+\.\s+(.+)$/)){if(!block)block={title:'',items:[],paras:[]};block.items.push({t:'oli',v:m[1]});continue;}
@@ -137,32 +3573,22 @@ function rb(b){
  if(b.paras.length)h+=b.paras.map(function(p){return '<p>'+inl(p)+'</p>';}).join('');
  return h;
 }
+
+function tagRow(r){
+ if(!r.tags||!r.tags.length)return '';
+ return '<div class="tags">'+r.tags.map(function(t){return '<span class="tg">'+esc(t)+'</span>';}).join('')+'</div>';
+}
 var SHARE='<div class="share"><button class="sh sh-wa" data-act="whatsapp">Send on WhatsApp</button><button class="sh" data-act="share">Share…</button><button class="sh" data-act="copy">Copy</button><button class="sh" data-act="pdf">Save as PDF</button></div>';
 var last=null,html='';
 recipes.forEach(function(r){
  if(r.section!==last){last=r.section;html+='<h2 class="section">'+esc(r.section)+'</h2>';}
- html+='<details class="recipe" data-cat="'+esc(r.section)+'" data-tags="|'+r.tags.join('|')+'|" data-serves="'+(r.serves||'')+'" id="r'+r.n+'"><summary><span class="num">'+r.n+'</span><span class="titlewrap"><span class="title">'+esc(r.title)+'</span><span class="meta">'+esc(r.meta)+'</span></span><span class="tag">'+esc(TAGS[r.section]||'')+'</span><span class="chev" aria-hidden="true">›</span></summary><div class="body"><p class="blurb">'+inl(r.blurb)+'</p>'+r.blocks.map(rb).join('')+'</div></details>';
+ html+='<details class="recipe" data-tags="'+esc((r.tags||[]).join('|'))+'" id="r'+r.n+'"><summary><span class="num">'+r.n+'</span><span class="titlewrap"><span class="title">'+esc(r.title)+'</span><span class="meta">'+esc(r.meta)+'</span></span><span class="tag">'+esc(TAGS[r.section]||'')+'</span><span class="chev" aria-hidden="true">›</span></summary><div class="body"><p class="blurb">'+inl(r.blurb)+'</p>'+tagRow(r)+r.blocks.map(rb).join('')+'</div></details>';
 });
 document.getElementById('out').innerHTML=html;
-if(!recipes.length){document.getElementById('out').innerHTML='<p class="coming">Recipes are being added — check back soon. 🍳</p>';}
-document.getElementById('foot').textContent=recipes.length?(recipes.length+' recipes · nutrition figures are approximate'):'';
+document.getElementById('foot').textContent=recipes.length+' recipes · updated '+(MD.match(/updated ([^·_]+)/)?RegExp.$1.trim():'')+' · nutrition figures are approximate';
 var q=document.getElementById('q'),cards=[].slice.call(document.querySelectorAll('.recipe')),empty=document.getElementById('empty');
-cards.forEach(function(c){c._ix=(c.textContent||'').toLowerCase().replace(/\s+/g,' ');c.querySelector('.body').insertAdjacentHTML('beforeend',SHARE);});
-var heads=[].slice.call(document.querySelectorAll('h2.section'));
-var tabsEl=document.getElementById('tabs'),filtersEl=document.getElementById('filters');
-var activeCat='all',activeFilters={};
-function apply(){var t=q.value.trim().toLowerCase(),shown=0;var fkeys=[];for(var k in activeFilters){if(activeFilters[k])fkeys.push(k);}
- cards.forEach(function(c){var okText=!t||c._ix.indexOf(t)!==-1;var okCat=activeCat==='all'||c.getAttribute('data-cat')===activeCat;var tg=c.getAttribute('data-tags')||'';var okFil=fkeys.every(function(f){return tg.indexOf('|'+f+'|')!==-1;});var hit=okText&&okCat&&okFil;c.style.display=hit?'':'none';if(hit)shown++;if(!hit)c.open=false;});
- heads.forEach(function(h){var any=false,el=h.nextElementSibling;while(el&&el.tagName!=='H2'){if(el.classList&&el.classList.contains('recipe')&&el.style.display!=='none'){any=true;break;}el=el.nextElementSibling;}h.style.display=any?'':'none';});
- empty.style.display=(shown||!cards.length)?'none':'block';}
-tabsEl.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.tab');if(!b)return;activeCat=b.getAttribute('data-cat');[].forEach.call(tabsEl.children,function(x){x.className=(x===b?'tab on':'tab');});apply();});
-var fbtn=document.getElementById('filterbtn'),fcount=document.getElementById('fcount');
-function updCount(){var n=0;for(var k in activeFilters){if(activeFilters[k])n++;}fcount.textContent=n?String(n):'';}
-filtersEl.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.chip');if(!b)return;var f=b.getAttribute('data-filter');activeFilters[f]=!activeFilters[f];b.className=(activeFilters[f]?'chip on':'chip');updCount();apply();});
-fbtn.addEventListener('click',function(e){e.stopPropagation();var hidden=filtersEl.hasAttribute('hidden');if(hidden){filtersEl.removeAttribute('hidden');fbtn.setAttribute('aria-expanded','true');}else{filtersEl.setAttribute('hidden','');fbtn.setAttribute('aria-expanded','false');}});
-document.addEventListener('click',function(e){if(!filtersEl.hasAttribute('hidden')&&!filtersEl.contains(e.target)&&e.target!==fbtn&&!fbtn.contains(e.target)){filtersEl.setAttribute('hidden','');fbtn.setAttribute('aria-expanded','false');}});
-q.addEventListener('input',apply);
-apply();
+cards.forEach(function(c){c._ix=(c.textContent||'').toLowerCase().replace(/\s+/g,' ');c._tags=(c.dataset.tags||'').split('|').filter(Boolean);c.querySelector('.body').insertAdjacentHTML('beforeend',SHARE);});
+
 var toast=document.getElementById('toast'),tT;
 function say(m){toast.textContent=m;toast.classList.add('on');clearTimeout(tT);tT=setTimeout(function(){toast.classList.remove('on');},2200);}
 function textOf(card){
@@ -198,4 +3624,55 @@ document.addEventListener('click',function(e){
 });
 function fb(text,done){var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done();}catch(err){say('Could not copy');}document.body.removeChild(ta);}
 window.addEventListener('afterprint',function(){[].forEach.call(document.querySelectorAll('.recipe'),function(c){c.classList.remove('print-me');});});
+
+function lcSect(name){
+ var re=new RegExp('^## '+name+'\\s*$','m'), i=MD.search(re);
+ if(i<0)return [];
+ var rest=MD.slice(i).split('\n').slice(1),out=[];
+ for(var k=0;k<rest.length;k++){if(/^#{1,2} /.test(rest[k]))break;out.push(rest[k]);}
+ return out;
+}
+function lcRender(ls){
+ var h='',ul=[];
+ ls.forEach(function(l){
+  if(/^- /.test(l)){ul.push('<li>'+inl(l.slice(2))+'</li>');}
+  else if(l.trim()){if(ul.length){h+='<ul>'+ul.join('')+'</ul>';ul=[];}h+='<p>'+inl(l.trim())+'</p>';}
+ });
+ if(ul.length)h+='<ul>'+ul.join('')+'</ul>';
+ return h;
+}
+var how=lcRender(lcSect('How to use this book'));
+if(how)document.getElementById('note').innerHTML=how;
+
+/* ---- tag filter ---- */
+var FILTERS=['Low calorie','High protein','Bahraini','Middle Eastern','Air fryer','Dips','Breakfast','Mains','Breads','Snacks','Desserts'];
+var active=null;
+var bar=document.getElementById('tagbar');
+FILTERS.forEach(function(t){
+ var b=document.createElement('button');
+ b.className='chip';b.textContent=t;b.dataset.tag=t;
+ bar.appendChild(b);
+});
+function applyFilter(){
+ var t=q.value.trim().toLowerCase(),shown=0;
+ cards.forEach(function(c){
+  var hit=(!t||c._ix.indexOf(t)!==-1)&&(!active||(c._tags||[]).indexOf(active)!==-1);
+  c.style.display=hit?'':'none';if(hit)shown++;if(!hit)c.open=false;
+ });
+ [].forEach.call(document.querySelectorAll('h2.section'),function(h){
+  var el=h.nextElementSibling,any=false;
+  while(el&&el.tagName==='DETAILS'){if(el.style.display!=='none'){any=true;break;}el=el.nextElementSibling;}
+  h.style.display=any?'':'none';
+ });
+ empty.style.display=shown?'none':'block';
+ document.getElementById('count').textContent=shown===cards.length?'':shown+' of '+cards.length+' recipes';
+}
+bar.addEventListener('click',function(e){
+ var b=e.target.closest('.chip');if(!b)return;
+ active=(active===b.dataset.tag)?null:b.dataset.tag;
+ [].forEach.call(bar.children,function(c){c.classList.toggle('on',c.dataset.tag===active);});
+ applyFilter();
+});
+q.addEventListener('input',applyFilter);
+applyFilter();
 </script></body></html>
