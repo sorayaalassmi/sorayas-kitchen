@@ -78,7 +78,6 @@ footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:28px;font
 @media print{.note,#tagbar,#count,.tags{display:none!important}}
 </style></head><body><div class="wrap">
 <header><h1>Soraya's Kitchen</h1><p class="sub">Every recipe in one book · tap one to open it, then share it</p></header>
-<div class="note" id="note"></div>
 <input class="search" id="q" type="search" placeholder="Search recipes, ingredients, tags…" autocomplete="off">
 <div id="tagbar"></div>
 <p id="count"></p>
@@ -3641,9 +3640,6 @@ function lcRender(ls){
  if(ul.length)h+='<ul>'+ul.join('')+'</ul>';
  return h;
 }
-var how=lcRender(lcSect('How to use this book'));
-if(how)document.getElementById('note').innerHTML=how;
-
 /* ---- tag filter ---- */
 var FILTERS=['Low calorie','High protein','Bahraini','Middle Eastern','Air fryer','Dips','Breakfast','Mains','Breads','Snacks','Desserts'];
 var active=null;
