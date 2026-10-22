@@ -3577,7 +3577,7 @@ function tagRow(r){
  if(!r.tags||!r.tags.length)return '';
  return '<div class="tags">'+r.tags.map(function(t){return '<span class="tg">'+esc(t)+'</span>';}).join('')+'</div>';
 }
-var SHARE='<div class="share"><button class="sh sh-wa" data-act="whatsapp">Send on WhatsApp</button><button class="sh" data-act="share">Share…</button><button class="sh" data-act="copy">Copy</button><button class="sh" data-act="pdf">Save as PDF</button></div>';
+var SHARE='<div class="share"><button class="sh sh-wa" data-act="whatsapp">Send on WhatsApp</button><button class="sh" data-act="share">Share…</button></div>';
 var last=null,html='';
 recipes.forEach(function(r){
  if(r.section!==last){last=r.section;html+='<h2 class="section">'+esc(r.section)+'</h2>';}
@@ -3590,39 +3590,23 @@ cards.forEach(function(c){c._ix=(c.textContent||'').toLowerCase().replace(/\s+/g
 
 var toast=document.getElementById('toast'),tT;
 function say(m){toast.textContent=m;toast.classList.add('on');clearTimeout(tT);tT=setTimeout(function(){toast.classList.remove('on');},2200);}
-function textOf(card){
- var out=[];
- out.push(card.querySelector('.title').textContent.toUpperCase());
- out.push(card.querySelector('.meta').textContent);out.push('');
- out.push(card.querySelector('.blurb').textContent);
- [].forEach.call(card.querySelector('.body').children,function(el){
-  if(el.classList.contains('blurb')||el.classList.contains('share'))return;
-  if(el.tagName==='H3'){out.push('');out.push(el.textContent.toUpperCase());}
-  else if(el.tagName==='UL'){[].forEach.call(el.children,function(li){out.push('• '+li.textContent);});}
-  else if(el.tagName==='OL'){var i=1;[].forEach.call(el.children,function(li){out.push((i++)+'. '+li.textContent);});}
-  else if(el.tagName==='P'){out.push(el.textContent);}
- });
- out.push('');out.push("From Soraya's Kitchen");
- return out.join('\n');
-}
+// Share a LINK to the recipe on the site (not the text) so people come back
+// to the website to read it. Deep link is origin + #r<n>.
+function linkOf(card){return location.origin+location.pathname+'#'+card.id;}
 if(!navigator.share){[].forEach.call(document.querySelectorAll('.sh[data-act=share]'),function(b){b.hidden=true;});}
 document.addEventListener('click',function(e){
  var btn=e.target.closest?e.target.closest('.sh'):null;if(!btn)return;e.preventDefault();
- var card=btn.closest('details.recipe'),text=textOf(card),title=card.querySelector('.title').textContent,act=btn.dataset.act;
- if(act==='whatsapp'){window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');}
- else if(act==='share'){navigator.share({title:title,text:text}).catch(function(){});}
- else if(act==='copy'){
-  var done=function(){say('Recipe copied');};
-  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,function(){fb(text,done);});}else{fb(text,done);}
- } else if(act==='pdf'){
-  [].forEach.call(document.querySelectorAll('.recipe'),function(c){c.classList.remove('print-me');});
-  card.classList.add('print-me');card.open=true;
-  say('Choose "Save as PDF" in the print menu');
-  setTimeout(function(){window.print();},400);
- }
+ var card=btn.closest('details.recipe'),title=card.querySelector('.title').textContent,url=linkOf(card),act=btn.dataset.act;
+ if(act==='whatsapp'){window.open('https://wa.me/?text='+encodeURIComponent(title+"\n"+url),'_blank');}
+ else if(act==='share'){navigator.share({title:title,url:url}).catch(function(){});}
 });
-function fb(text,done){var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done();}catch(err){say('Could not copy');}document.body.removeChild(ta);}
-window.addEventListener('afterprint',function(){[].forEach.call(document.querySelectorAll('.recipe'),function(c){c.classList.remove('print-me');});});
+// Open (and scroll to) the shared recipe when someone arrives via the link.
+function openHash(){
+ var h=location.hash;if(!/^#r\d+$/.test(h))return;
+ var el=document.querySelector(h);
+ if(el&&el.tagName==='DETAILS'){el.open=true;setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},60);}
+}
+openHash();window.addEventListener('hashchange',openHash);
 
 function lcSect(name){
  var re=new RegExp('^## '+name+'\\s*$','m'), i=MD.search(re);
